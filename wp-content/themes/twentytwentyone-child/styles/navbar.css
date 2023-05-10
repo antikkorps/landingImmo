@@ -1,0 +1,33 @@
+#masthead {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0;
+  max-width: 100%;
+  position: relative;
+  top: 0;
+}
+
+.nav-link {
+  color: #fff;
+}
+
+.nav-link:active {
+  text-decoration: none;
+  background-color: none;
+}
+
+.nav-link:active {
+  color: #fff;
+}
+
+.nav-link:active {
+  background-color: #fff;
+}
+.navbar {
+  z-index: 1;
+}
+
+a,
+a:hover {
+  text-decoration: none;
+}

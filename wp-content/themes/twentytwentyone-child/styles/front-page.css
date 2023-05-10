@@ -1,0 +1,182 @@
+.jumbotron {
+  background-image: url(http://localhost:10014/wp-content/uploads/2023/05/ralph-ravi-kayden-2d4lAQAlbDA-unsplash-scaled.jpg);
+  height: 95vh;
+  object-fit: cover;
+  background-position: center;
+}
+
+.heading {
+  backdrop-filter: blur(10px) grayscale(30%) brightness(80%);
+  padding: 2rem 3rem;
+  margin: auto;
+  position: relative;
+  top: 30%;
+}
+
+.main_card {
+  width: 90%;
+  margin: auto;
+}
+
+.container_section_explication {
+  width: 90%;
+  margin: auto;
+}
+
+.card {
+  margin-bottom: 2rem;
+}
+
+.animation_group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 90%;
+}
+
+@keyframes floater {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animation_1 {
+  width: 100%;
+}
+
+.animation_2,
+.animation_3,
+.animation_4,
+.animation_5 {
+  display: none;
+}
+
+.sms_animation {
+  display: flex;
+  width: 20rem;
+  height: 30rem;
+  object-fit: cover;
+  margin: 0 auto -5rem auto;
+}
+
+.formation_illus {
+  width: 100%;
+  margin: 0 auto 2rem auto;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.call_to_action_audio {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 2rem auto;
+  width: 50%;
+}
+
+.container_video {
+  width: 80%;
+}
+
+@media screen and (min-width: 1000px) {
+  .heading {
+    position: absolute;
+    top: 60%;
+    right: 0;
+  }
+  .main_card {
+    width: 70%;
+    margin: auto;
+  }
+
+  .container_section_explication {
+    width: 80%;
+    margin: auto;
+  }
+
+  .container_illustration {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .sms_animation {
+    width: 20rem;
+    height: 30rem;
+    object-fit: cover;
+    position: relative;
+    top: 5rem;
+    transform: rotate(-8deg);
+    z-index: -1;
+  }
+
+  .animation_group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 0 auto -5em auto;
+    width: 90%;
+  }
+
+  .animation_2 {
+    animation: floater 2s ease-in-out 0.5s infinite;
+    position: relative;
+    left: 8em;
+    top: -5em;
+  }
+
+  .animation_3 {
+    animation: floater 2s ease-in-out 1s infinite;
+    position: relative;
+    left: -12em;
+    top: -5em;
+  }
+
+  .animation_4 {
+    animation: floater 2s ease-in-out 1.5s infinite;
+    position: relative;
+    top: -15em;
+  }
+
+  .animation_5 {
+    animation: floater 2s ease-in-out infinite;
+    position: relative;
+    top: -15em;
+    left: -2em;
+  }
+
+  .formation_illus {
+    width: 40rem;
+    height: 30rem;
+    object-fit: cover;
+    z-index: -1;
+  }
+  .call_to_action_audio {
+    width: 20%;
+  }
+  .container_video {
+    display: flex;
+    flex-direction: row-reverse;
+    width: 90%;
+    margin: auto;
+  }
+  .video_video {
+    width: 50%;
+    height: auto;
+    margin: 0 auto;
+  }
+  .video_description {
+    width: 50%;
+    height: auto;
+  }
+}

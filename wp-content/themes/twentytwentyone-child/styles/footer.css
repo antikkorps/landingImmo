@@ -1,0 +1,16 @@
+#colophon {
+  background-color: whitesmoke;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 2%;
+}
+.site-info {
+  display: flex;
+  justify-content: center;
+  color: whitesmoke;
+}
+
+.site-footer > .site-info {
+  color: pink;
+}
