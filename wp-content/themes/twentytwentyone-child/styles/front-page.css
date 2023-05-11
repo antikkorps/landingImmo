@@ -1,3 +1,23 @@
+a:active {
+  background-color: red;
+}
+.backtotop {
+  position: fixed;
+  bottom: 1em;
+  right: 2em;
+  background-color: black;
+  width: 2.5em;
+  height: 2.5em;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 1;
+}
+.backtotop:hover {
+  background-color: #333;
+  color: white;
+}
+
 .jumbotron {
   background-image: url(http://localhost:10014/wp-content/uploads/2023/05/ralph-ravi-kayden-2d4lAQAlbDA-unsplash-scaled.jpg);
   height: 95vh;
@@ -74,16 +94,12 @@
   z-index: -1;
 }
 
-.call_to_action_audio {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto 2rem auto;
-  width: 50%;
-}
-
 .container_video {
-  width: 80%;
+  width: 90%;
+}
+.video_description {
+  width: 100%;
+  height: auto;
 }
 
 @media screen and (min-width: 1000px) {
@@ -115,7 +131,7 @@
     object-fit: cover;
     position: relative;
     top: 5rem;
-    transform: rotate(-8deg);
+    transform: rotate(-3deg);
     z-index: -1;
   }
 
@@ -124,7 +140,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    margin: 0 auto -5em auto;
+    margin: 0 auto 0 auto;
     width: 90%;
   }
 
@@ -161,9 +177,7 @@
     object-fit: cover;
     z-index: -1;
   }
-  .call_to_action_audio {
-    width: 20%;
-  }
+
   .container_video {
     display: flex;
     flex-direction: row-reverse;
@@ -179,4 +193,9 @@
     width: 50%;
     height: auto;
   }
+}
+
+/* CONTACT FORM */
+.form_submit_btn {
+  background-color: #0d6efd;
 }
