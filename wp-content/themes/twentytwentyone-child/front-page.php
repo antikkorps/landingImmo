@@ -276,7 +276,7 @@ $description = get_the_archive_description();
 
             </div>
             <div class="btn_container d-flex mt-3 justify-content-center">
-                <a href="" class="btn btn-primary btn-lg my-5 mx-auto col-sm-6 col-md-5 col-lg-2">En savoir plus</a>
+                <a href="#contact_container" class="btn btn-primary btn-lg my-5 mx-auto col-sm-6 col-md-5 col-lg-2">En savoir plus</a>
             </div>
         </div>
 
@@ -369,7 +369,7 @@ $description = get_the_archive_description();
 
         <!-- CALL TO ACTION -->
         <div class="d-grid gap-2 col-sm-6 col-md-5 col-lg-3 mx-auto my-5">
-            <a href="#" class="btn btn-primary btn-lg">Contactez-nous pour tester</a>
+            <a href="#contact_container" class="btn btn-primary btn-lg">Contactez-nous pour tester</a>
         </div>
 
 
