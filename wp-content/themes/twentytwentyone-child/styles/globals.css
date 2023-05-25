@@ -128,3 +128,21 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
+.btn-primary {
+  background-color: #084b84;
+  border-color: #084b84;
+}
+
+.single-client h4 {
+  color: #084b84;
+}
+
+h4,
+h5 {
+  color: #d10565;
+}
+
+.card-header {
+  color: #333333;
+}

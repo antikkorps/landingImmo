@@ -98,7 +98,7 @@ $description = get_the_archive_description();
                 <div class="row">
                     <div class="col-sm-12 col-md-3 col-lg-3 my-3">
                         <div class="single-client text-center">
-                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/roue.png';  ?> alt="illustration animation">
+                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/horlogeOutline.png';  ?> alt="illustration animation" style="width:25%;">
                             <h6 class='mt-3'>7 heures</h6>
                         </div>
                         <!-- single -->
@@ -112,14 +112,14 @@ $description = get_the_archive_description();
                     </div>
                     <div class="col-sm-12 col-md-3 col-lg-3 my-3">
                         <div class="single-client text-center">
-                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/roue.png';  ?> alt="illustration animation">
+                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/engrenages.png';  ?> alt="illustration animation" style="width:30%;">
                             <h6 class='mt-3'>Mise à jour 2023</h6>
                         </div>
                         <!-- single -->
                     </div>
                     <div class="col-sm-12 col-md-3 col-lg-3 my-3">
                         <div class="single-client text-center">
-                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/roue.png';  ?> alt="illustration animation">
+                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/AmpouleAncrage.png';  ?> alt="illustration animation" style="width:25%;">
                             <h6 class='mt-3'>Ancrage mémoriel performant</h6>
                         </div>
                         <!-- single -->
@@ -435,7 +435,7 @@ $description = get_the_archive_description();
             <h4 class="text-center">Contactez-nous ici</h4>
             <?php echo do_shortcode('[wpforms id="36"]'); ?>
         </div>
-        <img class='col-sm-12 col-md-6 col-lg-7 rounded-end illustration_contact' src="<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/kam-idris-kyt0PkBSCNQ-unsplash-scaled.jpg';  ?>" alt="">
+        <img class='col-sm-12 col-md-6 col-lg-7 rounded-end illustration_contact' src="<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/4370811-scaled.jpg';  ?>" alt="">
     </div>
 
     <!-- BACK TO TOP -->

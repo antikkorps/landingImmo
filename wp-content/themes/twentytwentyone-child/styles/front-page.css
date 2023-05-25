@@ -45,7 +45,7 @@ a:active {
 .dci_section {
   width: 100%;
   height: 100%;
-  background-color: #1d2327;
+  background-color: #084b84;
 }
 
 .container_section_explication {
@@ -221,6 +221,8 @@ a:active {
   /* CONTACT FORM */
   .illustration_contact {
     display: flex;
+    object-fit: cover;
+    width: 45%;
   }
   .form_submit_btn {
     background-color: #0d6efd;
