@@ -9,7 +9,7 @@ a:active {
   position: fixed;
   bottom: 1em;
   right: 2em;
-  background-color: black;
+  background-color: #d10565;
   width: 2.5em;
   height: 2.5em;
   color: white;
@@ -17,8 +17,9 @@ a:active {
   cursor: pointer;
   z-index: 1;
 }
-.backtotop:hover {
-  background-color: #333;
+.backtotop:is(:hover, :focus, :active, :visited) {
+  background-color: #d10565;
+  opacity: 0.8;
   color: white;
 }
 
