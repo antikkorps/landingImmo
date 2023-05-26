@@ -105,7 +105,7 @@ $description = get_the_archive_description();
                     </div>
                     <div class="col-sm-12 col-md-3 col-lg-3 my-3">
                         <div class="single-client text-center">
-                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/roue.png';  ?> alt="illustration animation">
+                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/laptop-white.png';  ?> alt="illustration animation" style="width:35%;">
                             <h6 class='mt-3'>100% e-learning</h6>
                         </div>
                         <!-- single -->
@@ -387,7 +387,7 @@ $description = get_the_archive_description();
                 <div class="row">
                     <div class="col-sm-12 col-md-3 col-lg-3 my-3">
                         <div class="single-client text-center">
-                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/roue.png';  ?> alt="illustration animation">
+                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/smiley.png';  ?> alt="illustration animation" style="width:40%;">
                             <h4 class='mt-5'>Taux de satisfaction</h4>
                             <h4 class='mt-3'>99% en 2022</h4>
                         </div>
@@ -395,7 +395,7 @@ $description = get_the_archive_description();
                     </div>
                     <div class="col-sm-12 col-md-3 col-lg-3 my-3">
                         <div class="single-client text-center">
-                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/roue.png';  ?> alt="illustration animation">
+                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/galaxy.png';  ?> alt="illustration animation" style="width:40%;">
                             <h4 class='mt-5'>Nombre d'apprenants</h4>
                             <h4 class='mt-3'>10.000 par an</h4>
                         </div>
@@ -403,7 +403,7 @@ $description = get_the_archive_description();
                     </div>
                     <div class="col-sm-12 col-md-3 col-lg-3 my-3">
                         <div class="single-client text-center">
-                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/roue.png';  ?> alt="illustration animation">
+                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/check.png';  ?> alt="illustration animation" style="width:40%;">
                             <h4 class='mt-5'>Des résultats</h4>
                             <h4 class='mt-3'>Mesurables dès la première séance</h4>
                         </div>
@@ -411,7 +411,7 @@ $description = get_the_archive_description();
                     </div>
                     <div class="col-sm-12 col-md-3 col-lg-3 my-3">
                         <div class="single-client text-center">
-                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/roue.png';  ?> alt="illustration animation">
+                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/objectif.png';  ?> alt="illustration animation" style="width:30%;">
                             <h4 class='mt-5'>Des REX</h4>
                             <h4 class='mt-3'>Des retours d'expériences à chaque étape</h4>
                         </div>
@@ -426,7 +426,8 @@ $description = get_the_archive_description();
     </div>
 
     <!-- DIVIDER -->
-    <div class="divider"></div>
+    <div class=" divider">
+    </div>
 
     <!-- CONTACT CONTAINER -->
     <div class="contact_container d-flex justify-content-center mx-auto my-5 pt-5" id="contact_container">

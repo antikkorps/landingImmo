@@ -146,3 +146,18 @@ h5 {
 .card-header {
   color: #333333;
 }
+
+.bg-success {
+  background-color: #d10565 !important;
+}
+
+a.btn-primary {
+  background-color: #d10565 !important;
+  border-color: #d10565 !important;
+  font-weight: 600;
+}
+button {
+  background-color: #d10565 !important;
+  border-color: #d10565 !important;
+  font-weight: 600;
+}
