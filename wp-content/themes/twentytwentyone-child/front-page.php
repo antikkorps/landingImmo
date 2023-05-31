@@ -75,7 +75,7 @@ $description = get_the_archive_description();
                     <p class="card-text">Vous devez renouveler votre carte professionnelle Transaction d'agent immobilier ou votre attestation de collaborateur</p>
                     <p class="card-text">Vous souhaitez vous perfectionner avec les nouveautés réglementaires du crédit immobilier</p>
                     <p class="card-text">Nous vous proposons de découvrir dès aujourd'hui notre formation Directive Crédit Immobilier - Version 2023</p>
-                    <a href="#" class="btn btn-primary btn-lg col-sm-6 col-md-5 col-lg-2 my-3">J'y vais</a>
+                    <a href="#contact_container" class="btn btn-primary btn-lg col-sm-6 col-md-5 col-lg-2 my-3">J'y vais</a>
                 </div>
                 <div class="card-footer text-muted">
                     Formation en distanciel
@@ -187,7 +187,7 @@ $description = get_the_archive_description();
                             </ul>
                         </div>
                         <div class="card-footer text-center">
-                            <a href="" class="btn btn-primary mx-auto my-2">Vous voulez le détail ?</a>
+                            <a href="#contact_container" class="btn btn-primary mx-auto my-2">Vous voulez le détail ?</a>
                         </div>
                     </div>
                 </div>
@@ -211,7 +211,7 @@ $description = get_the_archive_description();
 
                         </div>
                         <div class="card-footer text-center">
-                            <a href="" class="btn btn-primary mx-auto my-2">Vous êtes concernés ?</a>
+                            <a href="#contact_container" class="btn btn-primary mx-auto my-2">Vous êtes concernés ?</a>
                         </div>
                     </div>
                 </div>
@@ -239,7 +239,7 @@ $description = get_the_archive_description();
 
                         </div>
                         <div class="card-footer text-center">
-                            <a href="" class="btn btn-primary mx-auto my-2">Demander des informations</a>
+                            <a href="#contact_container" class="btn btn-primary mx-auto my-2">Demander des informations</a>
                         </div>
                     </div>
                 </div>
@@ -374,7 +374,7 @@ $description = get_the_archive_description();
 
 
         <!-- DIVIDER -->
-        <div class="divider"></div>
+        <div class="divider" id="quelques_chiffres"></div>
 
         <!-- SECTION PICTO -->
 

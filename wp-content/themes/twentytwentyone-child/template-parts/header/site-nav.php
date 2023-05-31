@@ -32,9 +32,9 @@
 						Nos formations
 					</a>
 					<ul class="dropdown-menu">
-						<li><a class="dropdown-item" href="#">DCI</a></li>
-						<li><a class="dropdown-item" href="#">Training Center</a></li>
-						<li><a class="dropdown-item" href="#">Quelques chiffres</a></li>
+						<li><a class="dropdown-item" href="#dci_section">DCI</a></li>
+						<li><a class="dropdown-item" href="#section_tc">Training Center</a></li>
+						<li><a class="dropdown-item" href="#quelques_chiffres">Quelques chiffres</a></li>
 					</ul>
 				</li>
 			</ul>
