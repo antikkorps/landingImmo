@@ -1534,3 +1534,55 @@ function is_wpmu_dev_admin() {
 
 	return false;
 }
+
+/**
+ * Check membership status
+ *
+ * Possible return values:
+ * 'free'    - Free hub membership.
+ * 'single'  - Single membership (i.e. only 1 project is licensed)
+ * 'unit'    - One or more projects licensed
+ * 'full'    - Full membership, no restrictions.
+ * 'paused'  - Membership access is paused.
+ * 'expired' - Expired membership.
+ * ''        - (empty string) If user is not logged in or with an unknown type.
+ *
+ * @since 1.24.1
+ *
+ * @return mixed
+ */
+function forminator_get_wpmudev_membership() {
+	if ( class_exists( 'WPMUDEV_Dashboard' ) ) {
+		if ( method_exists( 'WPMUDEV_Dashboard_Api', 'get_membership_status' ) ) {
+			return WPMUDEV_Dashboard::$api->get_membership_status();
+		}
+	}
+
+	return '';
+}
+
+/**
+ * Check if site is connected
+ *
+ * @since 1.24.1
+ *
+ * @return bool
+ */
+function forminator_is_site_connected_to_hub() {
+	switch ( forminator_get_wpmudev_membership() ) {
+		case 'free':
+		case 'single':
+		case 'unit':
+		case 'full':
+		case 'paused':
+		case 'expired':
+			$status = true;
+			break;
+
+		default:
+			$status = false;
+			break;
+	}
+
+	return $status;
+}

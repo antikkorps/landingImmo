@@ -147,14 +147,16 @@ class Forminator_Select extends Forminator_Field {
 		if ( $label ) {
 			if ( $required ) {
 				$html .= sprintf(
-					'<label for="%s" class="forminator-label">%s %s</label>',
+					'<label for="%s" id="%s" class="forminator-label">%s %s</label>',
+					$id,
 					$id . '-label',
 					esc_html( $label ),
 					forminator_get_required_icon()
 				);
 			} else {
 				$html .= sprintf(
-					'<label for="%s" class="forminator-label">%s</label>',
+					'<label for="%s" id="%s" class="forminator-label">%s</label>',
+					$id,
 					$id . '-label',
 					esc_html( $label )
 				);
@@ -266,13 +268,16 @@ class Forminator_Select extends Forminator_Field {
 
 				$class = 'forminator-option' . $extra_class;
 
-				$html .= sprintf( '<label for="%s" class="' . $class . '">', $input_id );
+				$label_id = $input_id . '-label';
+
+				$html .= sprintf( '<label id="' . $label_id . '" for="%s" class="' . $class . '">', $input_id );
 
 				$html .= sprintf(
-					'<input type="checkbox" name="%s" value="%s" id="%s" data-calculation="%s" %s %s />',
+					'<input type="checkbox" name="%s" value="%s" id="%s" aria-labelledby="%s" data-calculation="%s" %s %s />',
 					$name,
 					$value,
 					$input_id,
+					$label_id,
 					$calculation_value,
 					$hidden_calc_behavior,
 					$selected
@@ -395,7 +400,7 @@ class Forminator_Select extends Forminator_Field {
 			}
 
 			$html .= sprintf(
-				'<select id="%s" class="%s" data-required="%s" name="%s" data-default-value="%s"%s data-placeholder="%s" data-search="%s" aria-describedby="%s">',
+				'<select id="%s" class="%s" data-required="%s" name="%s" data-default-value="%s"%s data-placeholder="%s" data-search="%s" aria-labelledby="%s" aria-describedby="%s">',
 				$id,
 				'forminator-select--field forminator-select2', // class.
 				$required,
@@ -404,6 +409,7 @@ class Forminator_Select extends Forminator_Field {
 				$hidden_calc_behavior,
 				$placeholder,
 				$search,
+				esc_attr( $id . '-label' ),
 				esc_attr( $id . '-description' )
 			);
 

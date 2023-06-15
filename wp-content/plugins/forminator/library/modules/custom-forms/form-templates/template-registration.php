@@ -202,6 +202,8 @@ class Forminator_Template_Registration extends Forminator_Template {
 			'hide-registration-form'           => '1',
 			'hidden-registration-form-message' => '<p>' . __( 'You are already logged in.', 'forminator' ) . '</p>',
 			'autoclose'                        => false,
+			// Layout - Radio/Checkbox.
+			'field-image-size'                 => 'custom',
 		);
 	}
 }

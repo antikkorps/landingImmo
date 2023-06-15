@@ -466,7 +466,7 @@ class Forminator_QForm_Front extends Forminator_Render_Form {
 					$label         = $answer['title'];
 					$input_name    = 'end' === $result_behav ? $field_slug . '-' . $k : $field_slug;
 					$image         = isset( $answer['image'] ) ? $answer['image'] : '';
-					$image_alt     = '';
+					$image_alt     = isset( $answer['image_filename'] ) ? $answer['image_filename'] : '';
 					$has_label     = isset( $label ) && '' !== $label;
 					$has_image     = ( ! empty( $image ) );
 					$has_image_alt = ( isset( $image_alt ) && ! empty( $image_alt ) );

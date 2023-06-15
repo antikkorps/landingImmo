@@ -171,7 +171,7 @@ class Forminator_Poll_Front extends Forminator_Render_Form {
 		$message_wrap = '';
 		$status_info  = $this->model->opening_status();
 		if ( 'open' !== $status_info['status'] ) {
-			$html .= '<div class="forminator-response-message forminator-error
+			$html .= '<div role="alert" aria-live="polite" class="forminator-response-message forminator-error
  forminator-show">';
 			$html .= '<p>' . esc_html( $status_info['msg'] ) . '</p>';
 			$html .= '</div>';
@@ -180,10 +180,10 @@ class Forminator_Poll_Front extends Forminator_Render_Form {
 		$is_ajax_submit = $this->is_ajax_submit();
 		$is_preview     = $this->is_preview;
 		if ( 'open' === $status_info['status'] ) {
-			$hidden_wrap = '<div class="forminator-response-message" aria-hidden="true">';
+			$hidden_wrap = '<div role="alert" aria-live="polite" class="forminator-response-message" aria-hidden="true">';
 			if ( ! $is_preview && ! $is_ajax_submit ) {
 				$label_class  = filter_input( INPUT_GET, 'saved', FILTER_VALIDATE_BOOLEAN ) ? 'forminator-success' : 'forminator-error';
-				$message_wrap = '<div class="forminator-response-message forminator-show ' . esc_attr( $label_class ) . '" >';
+				$message_wrap = '<div role="alert" aria-live="polite" class="forminator-response-message forminator-show ' . esc_attr( $label_class ) . '" >';
 			} else {
 				$message_wrap = $hidden_wrap;
 			}
@@ -580,6 +580,7 @@ class Forminator_Poll_Front extends Forminator_Render_Form {
 		$images_enabled   = isset( $form_settings['enable_images'] ) ? filter_var( $form_settings['enable_images'], FILTER_VALIDATE_BOOLEAN ) : false;
 		$input_visibility = isset( $form_settings['input_visibility'] ) ? filter_var( $form_settings['input_visibility'], FILTER_VALIDATE_BOOLEAN ) : true;
 		$option_image_url = array_key_exists( 'answer_image', $field ) ? $field['answer_image'] : '';
+		$option_image_alt = array_key_exists( 'answer_image_alt', $field ) ? $field['answer_image_alt'] : '';
 
 		if ( ! isset( $field['value'] ) ) {
 			$field['value'] = sanitize_title( $label );
@@ -632,20 +633,20 @@ class Forminator_Poll_Front extends Forminator_Render_Form {
 
 			// Image.
 			if ( 'none' === $design || 'basic' === $design ) {
-				$html .= '<img class="forminator-radio-image" src="' . esc_url( $option_image_url ) . '" aria-hidden="true" />';
+				$html .= '<img class="forminator-radio-image" src="' . esc_url( $option_image_url ) . '" alt="' . esc_attr( $option_image_alt ) . '" aria-hidden="true" />';
 			} else {
 				$html     .= '<span class="forminator-radio-image" aria-hidden="true">';
-					$html .= '<span style="background-image: url(' . esc_url( $option_image_url ) . ');"></span>';
+					$html .= '<span style="background-image: url(' . esc_url( $option_image_url ) . ');"><span>' . esc_attr( $option_image_alt ) . '</span></span>';
 				$html     .= '</span>';
 			}
 		} elseif ( ! $input_visibility && ( $images_enabled && ! empty( $option_image_url ) ) ) {
 
 			// Image.
 			if ( 'none' === $design || 'basic' === $design ) {
-				$html .= '<img class="forminator-radio-image" src="' . esc_url( $option_image_url ) . '" aria-hidden="true" />';
+				$html .= '<img class="forminator-radio-image" src="' . esc_url( $option_image_url ) . '" alt="' . esc_attr( $option_image_alt ) . '" aria-hidden="true" />';
 			} else {
 				$html     .= '<span class="forminator-radio-image" aria-hidden="true">';
-					$html .= '<span style="background-image: url(' . esc_url( $option_image_url ) . ');"></span>';
+					$html .= '<span style="background-image: url(' . esc_url( $option_image_url ) . ');"><span>' . esc_attr( $option_image_alt ) . '</span></span>';
 				$html     .= '</span>';
 			}
 

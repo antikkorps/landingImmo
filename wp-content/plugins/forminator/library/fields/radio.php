@@ -157,8 +157,9 @@ class Forminator_Radio extends Forminator_Field {
 		}
 
 		$html .= sprintf(
-			'<div role="radiogroup" class="forminator-field" aria-labelledby="%s">',
-			esc_attr( 'forminator-radiogroup-' . $uniq_id . '-label' )
+			'<div role="radiogroup" class="forminator-field" aria-labelledby="%s" aria-describedby="%s">',
+			esc_attr( 'forminator-radiogroup-' . $uniq_id . '-label' ),
+			esc_attr( 'forminator-radiogroup-' . $uniq_id . '-description' )
 		);
 
 		if ( $label ) {
@@ -282,14 +283,16 @@ class Forminator_Radio extends Forminator_Field {
 			}
 
 			$selected = $option_selected ? 'checked="checked"' : '';
+			$label_id = $id . '-label-' . $i;
 
-			$html .= '<label for="' . esc_attr( $input_id ) . '" class="' . esc_attr( $class ) . '" title="' . esc_attr( $option['label'] ) . '">';
+			$html .= '<label id="'. esc_attr( $label_id ) .'" for="' . esc_attr( $input_id ) . '" class="' . esc_attr( $class ) . '" title="' . esc_attr( $option['label'] ) . '">';
 
 				$html .= sprintf(
-					'<input type="radio" name="%s" value="%s" id="%s" data-calculation="%s" %s %s aria-describedby="%s"/>',
+					'<input type="radio" name="%s" value="%s" id="%s" aria-labelledby="%s" data-calculation="%s" %s %s aria-describedby="%s"/>',
 					$name,
 					$value,
 					$input_id,
+					$label_id,
 					$calculation_value,
 					$selected,
 					$hidden_calc_behavior,
@@ -338,7 +341,7 @@ class Forminator_Radio extends Forminator_Field {
 
 		}
 
-			$html .= self::get_description( $description, $id . '-' . $uniq_id );
+			$html .= self::get_description( $description, 'forminator-radiogroup-' . $uniq_id );
 
 		$html .= '</div>';
 

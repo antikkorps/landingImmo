@@ -132,8 +132,17 @@
 				this.handle_submit_form_draft();
 			}
 
+			// Disable submit button onClick.
+			this.formSubmitOnclick();
+
+			$( 'body' ).off( 'forminator:preSubmit:paypal', this.settings.forminator_selector )
+					.on( 'forminator:preSubmit:paypal', this.settings.forminator_selector, function( e, $target_message ) { return self.processCaptcha( self, e, $target_message ); } );
 			$( 'body' ).off( 'submit.frontSubmit', this.settings.forminator_selector );
 			$( 'body' ).on( 'submit.frontSubmit', this.settings.forminator_selector, function ( e, submitter ) {
+				if ( 'frontSubmit' !== e.namespace ) {
+					return false;
+				}
+
 				// Disable submit button right away.
 				self.disable_form_submit( self, true );
 
@@ -147,7 +156,6 @@
 				    submitEvent = e,
 					formData = new FormData( this ),
 					$target_message = $this.find('.forminator-response-message'),
-					$captcha_field = self.$el.find('.forminator-g-recaptcha, .forminator-hcaptcha'),
 					$saveDraft = 'true' === self.$el.find( 'input[name="save_draft"]' ).val() ? true : false,
 					$datepicker = $('body').find( '#ui-datepicker-div.forminator-custom-form-' + self.$el.data( 'form-id' ) )
 					;
@@ -180,7 +188,7 @@
 				if ( self.$el.data( 'forminatorFrontPayment' ) && ! $saveDraft ) {
 					// Disable submit button right away to prevent multiple submissions
 					$this.find( '.forminator-button-submit' ).attr( 'disabled', true );
-					if ( false === self.processCaptcha( self, $captcha_field, $target_message ) ) {
+					if ( false === self.processCaptcha( self, e, $target_message ) ) {
 						$this.find( '.forminator-button-submit' ).attr( 'disabled', false );
 						self.disable_form_submit( self, false );
 						return false;
@@ -202,7 +210,7 @@
 					}
 
 					if ( ! self.$el.data( 'forminatorFrontPayment' ) && ! $saveDraft ) {
-						if ( false === self.processCaptcha( self, $captcha_field, $target_message ) ) {
+						if ( false === self.processCaptcha( self, e, $target_message ) ) {
 							self.disable_form_submit( self, false );
 							return false;
 						}
@@ -258,6 +266,10 @@
 									$target_message.addClass('forminator-error')
 										.html( '<p>' + window.ForminatorFront.cform.error + '<br>(' + data.data + ')</p>');
 									self.focus_to_element($target_message);
+
+									if ( data.data ) {
+										$this.trigger('forminator:form:submit:failed', [ formData, data.data ] );
+									}
 
 									return false;
 								}
@@ -315,6 +327,7 @@
 									if ( 'invalid' === data.data.authentication ) {
 										authField.find('.forminator-authentication-notice').addClass('error');
 										authField.find('.forminator-authentication-notice').html('<p>' + data.data.message + '</p>');
+										$this.trigger('forminator:form:submit:failed', [ formData, data.data.message ] );
 									}
 
 									return false;
@@ -386,11 +399,12 @@
 								}
 
 								if ( ! data.data.success ) {
-									$this.trigger('forminator:form:submit:failed', formData);
+									let errors = typeof data.data.errors !== 'undefined' && data.data.errors.length ? data.data.errors : '';
+									$this.trigger('forminator:form:submit:failed', [ formData, errors ] );
 									self.multi_upload_disable( $this, false );
 
-									if ( typeof data.data.errors !== 'undefined' && data.data.errors.length ) {
-										self.show_messages(data.data.errors);
+									if ( errors ) {
+										self.show_messages(errors);
 									}
 								}
 
@@ -501,13 +515,15 @@
 								var $message = err.status === 400 ? window.ForminatorFront.cform.upload_error : window.ForminatorFront.cform.error;
 								$target_message.html('<label class="forminator-label--notice"><span>' + $message + '</span></label>');
 								self.focus_to_element($target_message);
-								$this.trigger('forminator:form:submit:failed', formData);
+								$this.trigger('forminator:form:submit:failed', [ formData, $message ] );
 								self.multi_upload_disable( $this, false );
 							},
 							complete: function(xhr,status) {
 								self.$el.find('.forminator-button-submit').removeClass('forminator-button-onload');
 
 								$this.trigger('forminator:form:submit:complete', formData);
+
+								self.showLeadsLoader( self );
 							}
 						}).always(function () {
 							if( typeof self.settings.has_loader !== "undefined" && self.settings.has_loader ) {
@@ -540,6 +556,8 @@
 
 						submitEvent.currentTarget.submit();
 						self.disable_form_submit( self, false );
+
+						self.showLeadsLoader( self );
 					}
 				};
 
@@ -689,7 +707,8 @@
 			} );
 		},
 
-		processCaptcha: function( self, $captcha_field, $target_message ) {
+		processCaptcha: function( self, e, $target_message ) {
+			var $captcha_field = self.$el.find('.forminator-g-recaptcha, .forminator-hcaptcha');
 
 			if ($captcha_field.length) {
 				//validate only first
@@ -711,7 +730,7 @@
 					}
 
 					// reset after getResponse
-					if ( self.$el.hasClass( 'forminator_ajax' ) ) {
+					if ( self.$el.hasClass( 'forminator_ajax' ) && 'forminator:preSubmit:paypal' !== e.type ) {
 						window.grecaptcha.reset(captcha_widget);
 					}
 
@@ -729,7 +748,7 @@
 					}
 
 					// reset after getResponse
-					if ( self.$el.hasClass( 'forminator_ajax' ) ) {
+					if ( self.$el.hasClass( 'forminator_ajax' ) && 'forminator:preSubmit:paypal' !== e.type ) {
 						hcaptcha.reset( captcha_widget );
 					}
 				}
@@ -773,7 +792,8 @@
 				'pointer-events': 'none',
 				'margin': 0,
 				'padding': 0,
-				'border': 0
+				'border': 0,
+				'display': 'none',
 			});
 		},
 
@@ -786,7 +806,8 @@
 				'pointer-events': '',
 				'margin': '',
 				'padding': '',
-				'border': ''
+				'border': '',
+				'display': 'block',
 			});
 		},
 
@@ -995,6 +1016,7 @@
 					}
 				}).always(function () {
 					form.trigger('after:forminator:quiz:submit', [ ajaxData, formData ] );
+					form.nextAll( '.leads-quiz-loader' ).remove();
 				});
 				return false;
 			});
@@ -1399,18 +1421,20 @@
 						getElement = forminatorFrontCondition.get_form_field( elementId )
 						;
 
-					var holder      = $( getElement ),
-						holderField = holder.closest( '.forminator-field' ),
-						holderDate  = holder.closest( '.forminator-date-input' ),
-						holderTime  = holder.closest( '.forminator-timepicker' ),
-						holderError = '',
-						getColumn   = false,
-						getError    = false,
-						getDesc     = false
+					var holder          = $( getElement ),
+						holderField     = holder.closest( '.forminator-field' ),
+						holderDate      = holder.closest( '.forminator-date-input' ),
+						holderTime      = holder.closest( '.forminator-timepicker' ),
+						holderError     = '',
+						getColumn       = false,
+						getError        = false,
+						getDesc         = false,
+						errorId         = holder.attr('id') + '-error',
+						ariaDescribedby = holder.attr('aria-describedby')
 						;
 
 					var errorMessage = Object.values( value ),
-						errorMarkup  = '<span class="forminator-error-message" aria-hidden="true"></span>'
+						errorMarkup  = '<span class="forminator-error-message" id="'+ errorId +'"></span>'
 						;
 
 					if ( getElement.length ) {
@@ -1428,7 +1452,7 @@
 							getError  = getColumn.find( '.forminator-error-message[data-error-field="' + holder.data( 'field' ) + '"]' );
 							getDesc   = getColumn.find( '.forminator-description' );
 
-							errorMarkup = '<span class="forminator-error-message" data-error-field="' + holder.data( 'field' ) + '" aria-hidden="true"></span>';
+							errorMarkup = '<span class="forminator-error-message" data-error-field="' + holder.data( 'field' ) + '" id="'+ errorId +'"></span>';
 
 							if ( 0 === getError.length ) {
 
@@ -1450,7 +1474,7 @@
 									if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 										holderField.append(
-											'<span class="forminator-error-message" aria-hidden="true"></span>'
+											'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 										);
 									}
 								}
@@ -1475,7 +1499,7 @@
 									if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 										holderField.append(
-											'<span class="forminator-error-message" aria-hidden="true"></span>'
+											'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 										);
 									}
 								}
@@ -1491,7 +1515,7 @@
 									if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 										holderField.append(
-											'<span class="forminator-error-message" aria-hidden="true"></span>'
+											'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 										);
 									}
 								}
@@ -1509,7 +1533,7 @@
 							getError  = getColumn.find( '.forminator-error-message[data-error-field="' + holder.data( 'field' ) + '"]' );
 							getDesc   = getColumn.find( '.forminator-description' );
 
-							errorMarkup = '<span class="forminator-error-message" data-error-field="' + holder.data( 'field' ) + '" aria-hidden="true"></span>';
+							errorMarkup = '<span class="forminator-error-message" data-error-field="' + holder.data( 'field' ) + '" id="'+ errorId +'"></span>';
 
 							if ( 0 === getError.length ) {
 
@@ -1532,7 +1556,7 @@
 									if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 										holderField.append(
-											'<span class="forminator-error-message" aria-hidden="true"></span>'
+											'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 										);
 									}
 								}
@@ -1548,7 +1572,7 @@
 									if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 										holderField.append(
-											'<span class="forminator-error-message" aria-hidden="true"></span>'
+											'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 										);
 									}
 								}
@@ -1582,6 +1606,19 @@
 
 						}
 
+						// Field aria describedby for screen readers
+						if (ariaDescribedby) {
+							var ids = ariaDescribedby.split(' ');
+							var errorIdExists = ids.includes(errorId);
+							if (!errorIdExists) {
+								ids.push(errorId);
+							}
+							var updatedAriaDescribedby = ids.join(' ');
+							holder.attr('aria-describedby', updatedAriaDescribedby);
+						} else {
+							holder.attr('aria-describedby', errorId);
+						}
+
 						// Field invalid status for screen readers
 						holder.attr( 'aria-invalid', 'true' );
 
@@ -1607,7 +1644,31 @@
 		},
 
 		disable_form_submit: function ( form, disable  ) {
-			$( form ).find( '.forminator-button-submit' ).attr( 'disabled', disable );
+			form.$el.find( '.forminator-button-submit' ).attr( 'disabled', disable );
+		},
+
+		formSubmitOnclick: function () {
+			var self = this;
+
+			$( 'body' ).off( 'click', 'form' + self.settings.forminator_selector + ' .forminator-button-submit' );
+			$( 'body' ).on( 'click', 'form' + self.settings.forminator_selector + ' .forminator-button-submit', function ( e ) {
+				e.preventDefault();
+				$( this ).attr( 'disabled', true );
+				self.$el.trigger( 'submit.frontSubmit' );
+			});
+		},
+
+		showLeadsLoader: function ( quiz  ) {
+			if( quiz.settings.hasLeads && 'end' === quiz.settings.form_placement ) {
+				$( '#forminator-quiz-leads-' + quiz.settings.quiz_id )
+				.append(
+					'<div class="leads-quiz-loader forminator-response-message">' +
+					'<i class="forminator-icon-loader forminator-loading" ' +
+					'aria-hidden="true"></i>' +
+					'<style>.leads-quiz-loader{padding:20px;text-align:center;}.leads-quiz-loader .forminator-loading:before{display:block;}</style>' +
+					'</div>'
+				);
+			}
 		}
 
 	});

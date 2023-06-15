@@ -39,7 +39,7 @@ class Forminator_Poll_Front_Action extends Forminator_Front_Action {
 		}
 
 		try {
-			self::can_submit();
+			self::can_submit( true );
 
 			$entry = self::get_entry();
 
@@ -66,8 +66,10 @@ class Forminator_Poll_Front_Action extends Forminator_Front_Action {
 
 	/**
 	 * Check if submission is possible.
+	 *
+	 * @param bool $freeze Optional. Should it prevent parallel requests. False by default.
 	 */
-	private static function can_submit() {
+	private static function can_submit( $freeze = false ) {
 		// disable submissions if not published.
 		if ( Forminator_Poll_Model::STATUS_PUBLISH !== self::$module_object->status ) {
 			throw new Exception( __( 'Poll submissions disabled.', 'forminator' ) );
@@ -79,7 +81,7 @@ class Forminator_Poll_Front_Action extends Forminator_Front_Action {
 			throw new Exception( $status_info['msg'] );
 		}
 
-		$user_can_vote = self::$module_object->current_user_can_vote();
+		$user_can_vote = self::$module_object->current_user_can_vote( $freeze );
 		/**
 		 * Filter to check if current user can vote
 		 *
@@ -367,7 +369,7 @@ class Forminator_Poll_Front_Action extends Forminator_Front_Action {
 			if ( isset( $response['notice'] ) && $response['notice'] === 'error'
 				|| isset( $response['success'] ) && $response['success'] ) {
 				?>
-				<div class="forminator-response-message forminator-show <?php echo esc_attr( $label_class ); ?>">
+				<div role="alert" aria-live="polite" class="forminator-response-message forminator-show <?php echo esc_attr( $label_class ); ?>">
 					<p class="forminator-label--<?php echo esc_attr( $label_class ); ?>">
 						<?php echo esc_html( $response['message'] ); ?>
 					</p>

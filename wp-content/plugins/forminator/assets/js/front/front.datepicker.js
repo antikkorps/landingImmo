@@ -141,6 +141,8 @@
 								left: rect.left
 							});
 						}, 0);
+					} else {
+						$('body').append($('#ui-datepicker-div'));
 					}
 				},
 				"beforeShowDay": disabledWeekDays,

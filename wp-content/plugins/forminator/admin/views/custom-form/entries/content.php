@@ -52,17 +52,17 @@ if ( $this->total_entries() > 0 ) :
 			&& 'registration' === $this->model->settings['form-type'];
 	?>
 
-	<form method="GET" class="forminator-entries-actions">
+	<form method="GET" class="fui-listings-pagination forminator-entries-actions">
 
 		<input type="hidden" name="page" value="<?php echo esc_attr( $this->get_admin_page() ); ?>">
 		<input type="hidden" name="form_type" value="<?php echo esc_attr( $this->get_form_type() ); ?>">
 		<input type="hidden" name="form_id" value="<?php echo esc_attr( $this->get_form_id() ); ?>">
 
-		<div class="fui-pagination-entries sui-pagination-wrap">
+		<div class="fui-pagination-mobile fui-pagination-entries sui-pagination-wrap">
 			<?php $this->paginate(); ?>
 		</div>
 
-		<div class="sui-box fui-box-entries">
+		<div class="fui-pagination-desktop sui-box fui-box-entries">
 
 			<fieldset class="forminator-entries-nonce">
 				<?php wp_nonce_field( 'forminatorFormEntries', 'forminatorEntryNonce' ); ?>

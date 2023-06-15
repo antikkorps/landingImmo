@@ -101,7 +101,7 @@ class Forminator_Form_Entry_Model {
 	 * @since 1.1 Add instantiate connected addons
 	 * @since 1.2 Limit initiate addon only on custom-forms by default
 	 */
-	public function __construct( $entry_id = null ) {
+	public function __construct( $entry_id = 0 ) {
 		$this->table_name      = Forminator_Database_Tables::get_table_name( Forminator_Database_Tables::FORM_ENTRY );
 		$this->table_meta_name = Forminator_Database_Tables::get_table_name( Forminator_Database_Tables::FORM_ENTRY_META );
 
@@ -593,7 +593,21 @@ class Forminator_Form_Entry_Model {
 		}
 
 		if ( isset( $filters['user_status'] ) ) {
-			$where .= ' AND metas.meta_key="activation_key"';
+			require_once __DIR__ . '/../modules/custom-forms/user/class-forminator-cform-user-signups.php';
+			Forminator_CForm_User_Signups::prep_signups_functionality();
+			$ids = $wpdb->get_col(
+				"SELECT entries.entry_id
+				FROM {$entries_meta_table_name} entries
+				INNER JOIN {$wpdb->base_prefix}signups
+				AS `signups`
+				ON (entries.meta_value = `signups`.activation_key)
+				WHERE entries.meta_key='activation_key'
+				AND `signups`.active = 0"
+			);
+			$not = 'approved' === $filters['user_status'] ? ' NOT' : '';
+			if ( $ids ) {
+				$where .= " AND entries.entry_id {$not} IN(" . implode( ', ', $ids ) . ')';
+			}
 		}
 
 		if ( isset( $filters['search'] ) ) {
@@ -760,9 +774,9 @@ class Forminator_Form_Entry_Model {
 		}
 
 		$sql     =
-			"SELECT count(DISTINCT e.`entry_id`) FROM {$table_name} m 
-    		LEFT JOIN {$entry_table_name} e ON(e.`entry_id` = m.`entry_id`) 
-			WHERE e.`form_id` = %d AND m.meta_key = 'skip_form' 
+			"SELECT count(DISTINCT e.`entry_id`) FROM {$table_name} m
+    		LEFT JOIN {$entry_table_name} e ON(e.`entry_id` = m.`entry_id`)
+			WHERE e.`form_id` = %d AND m.meta_key = 'skip_form'
 			{$where}
 			AND m.meta_value = '0' AND e.`is_spam` = 0";
 		$entries = $wpdb->get_var( $wpdb->prepare( $sql, $form_id ) );
@@ -1781,17 +1795,17 @@ class Forminator_Form_Entry_Model {
 		if ( empty( $value ) ) {
 			return;
 		}
-		
+
 		$post_taxonomy  = $value;
 		$tax_obj 		= get_taxonomy( $tax_name );
 		$single_label	= '';
 		$plural_label	= '';
-		
+
 		if ( ! empty( $tax_obj ) ) {
 			$single_label   = ! empty( $tax_obj->labels->singular_name ) ? $tax_obj->labels->singular_name : $tax_obj->labels->name;
 			$plural_label	= $tax_obj->labels->name;
 		}
-		
+
 		$the_taxonomies = '';
 		$countonomies   = 0;
 		if ( is_array( $post_taxonomy ) ) {
@@ -1811,7 +1825,7 @@ class Forminator_Form_Entry_Model {
 				$the_taxonomies = '';
 			}
 		}
-		
+
 		if ( $allow_html ) {
 			$value = '<hr>';
 			if ( is_array( $post_taxonomy ) ) {
@@ -1825,7 +1839,7 @@ class Forminator_Form_Entry_Model {
 			$value .= $single_label . ': ';
 			$value .= $the_taxonomies . ' | ';
 		}
-		
+
 		return $value;
 	}
 
@@ -1933,7 +1947,7 @@ class Forminator_Form_Entry_Model {
 				if ( ! empty( $field['value'] ) ) {
 					$value .= '<li>';
 					$value .= esc_html( $field['key'] ) . ': ';
-					$value .= esc_html( $field['value'] );
+					$value .= wp_kses_post( $field['value'] );
 					$value .= '</li>';
 				}
 			}
@@ -2332,7 +2346,7 @@ class Forminator_Form_Entry_Model {
 						  	DATE(e.date_created) AS date_created
 							FROM {$entry_table_name} e
 							WHERE e.form_id = %d
-							AND e.date_created > %s 
+							AND e.date_created > %s
 							{$end_date}
 							GROUP BY DATE(e.date_created)
 							ORDER BY e.date_created DESC";
@@ -2763,7 +2777,7 @@ class Forminator_Form_Entry_Model {
 			$where    .= $wpdb->prepare( ' AND ( e.date_created >= %s AND e.date_created <= %s )', esc_sql( $start_date ), esc_sql( $end_date ) );
 		}
 
-		$sql = "SELECT m.meta_key, m.meta_value, e.date_created 
+		$sql = "SELECT m.meta_key, m.meta_value, e.date_created
 			FROM {$table_name} m
 			LEFT JOIN {$entry_table_name} e
 			ON (m.entry_id = e.entry_id)

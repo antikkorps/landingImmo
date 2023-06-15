@@ -123,6 +123,8 @@ class Forminator_Group extends Forminator_Field {
 
 		$i = 1;
 		do {
+			$html .= '<div class="forminator-grouped-fields" data-options="' . esc_attr( wp_json_encode( $options ) ) . '">';
+
 			if ( 1 < $i ) {
 				$wrappers = array_map(
 					function( $wrapper ) use ( $i ) {
@@ -140,8 +142,9 @@ class Forminator_Group extends Forminator_Field {
 					},
 					$wrappers
 				);
+
+				$html .= '<input name="' . esc_attr( $field['element_id'] ) . '-copies[]" type="hidden" value="' . intval( $i ) . '" />';
 			}
-			$html .= '<div class="forminator-grouped-fields" data-options="' . esc_attr( wp_json_encode( $options ) ) . '">';
 			$html .= $views_obj->render_wrappers( $wrappers );
 
 			if ( $options['is_repeater'] && ( 'custom' !== $options['min_type'] || 'custom' !== $options['max_type']

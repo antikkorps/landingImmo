@@ -80,6 +80,13 @@ abstract class Forminator_Admin_View_Page extends Forminator_Admin_Page {
 	protected $page_number = 1;
 
 	/**
+	 * Page num
+	 *
+	 * @var int
+	 */
+	protected $pagenum = 1;
+
+	/**
 	 * Filters to be used
 	 *
 	 * [key=>value]

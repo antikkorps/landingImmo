@@ -19,6 +19,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Forminator_Field {
 
 	/**
+	 * @var array
+	 */
+	public $field = array();
+
+	/**
+	 * @var array
+	 */
+	public $form_settings = array();
+
+	/**
 	 * @var string
 	 */
 	public $name = '';
@@ -258,6 +268,7 @@ abstract class Forminator_Field {
 	public static function get_description( $description, $get_id = '' ) {
 		$html         = '';
 		$allowed_html = array();
+		$id = $get_id . '-description';
 		if ( ! empty( $description ) ) {
 			$allowed_html = apply_filters(
 				'forminator_field_description_allowed_html',
@@ -337,8 +348,9 @@ abstract class Forminator_Field {
 			if ( $required ) {
 
 				$html .= sprintf(
-					'<label for="%s" class="forminator-label">%s %s</label>',
+					'<label for="%s" class="forminator-label" id="%s">%s %s</label>',
 					$get_id,
+					$get_id . '-label',
 					esc_html( $label ),
 					forminator_get_required_icon()
 				);
@@ -346,8 +358,9 @@ abstract class Forminator_Field {
 			} else {
 
 				$html .= sprintf(
-					'<label for="%s" class="forminator-label">%s</label>',
+					'<label for="%s" class="forminator-label" id="%s">%s</label>',
 					$get_id,
+					$get_id . '-label',
 					esc_html( $label )
 				);
 
@@ -416,8 +429,9 @@ abstract class Forminator_Field {
 			if ( $required ) {
 
 				$html .= sprintf(
-					'<label for="%s" class="forminator-label">%s %s</label>',
+					'<label for="%s" id="%s" class="forminator-label">%s %s</label>',
 					$attr['id'],
+					$attr['id'] . '-label',
 					esc_html( $label ),
 					forminator_get_required_icon()
 				);
@@ -425,8 +439,9 @@ abstract class Forminator_Field {
 			} else {
 
 				$html .= sprintf(
-					'<label for="%s" class="forminator-label">%s</label>',
+					'<label for="%s" id="%s" class="forminator-label">%s</label>',
 					$attr['id'],
+					$attr['id'] . '-label',
 					esc_html( $label )
 				);
 
@@ -455,7 +470,7 @@ abstract class Forminator_Field {
 	 *
 	 * @return mixed
 	 */
-	public static function create_wp_editor( $attr = array(), $label = '', $description = '', $required = false, $default_height = '140' ) {
+	public static function create_wp_editor( $attr = array(), $label = '', $description = '', $required = false, $default_height = '140', $limit = 0 ) {
 		$html = '';
 
 		$content = isset( $attr['content'] ) ? $attr['content'] : '';
@@ -487,6 +502,8 @@ abstract class Forminator_Field {
 		if ( $required ) {
 			apply_filters( 'the_editor', array( __CLASS__, 'add_required_wp_editor' ) );
 			$wp_editor_class .= ' do-validate forminator-wp-editor-required';
+		} elseif ( ! empty( $limit ) ) {
+			$wp_editor_class .= ' do-validate';
 		}
 
 		ob_start();
@@ -562,6 +579,12 @@ abstract class Forminator_Field {
 			$get_id = uniqid( 'forminator-select-' );
 		}
 
+		! empty( $label ) ? $attr['aria-labelledby'] = $get_id . '-label' : '';
+
+		! empty( $description ) ? $attr['aria-describedby'] = $get_id . '-description' : '';
+
+		$markup = self::implode_attr( $attr );
+
 		if ( self::get_post_data( $attr['name'], false ) ) {
 			$value = self::get_post_data( $attr['name'] );
 		}
@@ -571,8 +594,9 @@ abstract class Forminator_Field {
 			if ( $required ) {
 
 				$html .= sprintf(
-					'<label for="%s" class="forminator-label">%s %s</label>',
+					'<label for="%s" id="%s" class="forminator-label">%s %s</label>',
 					$get_id,
+					$get_id . '-label',
 					esc_html( $label ),
 					forminator_get_required_icon()
 				);
@@ -580,8 +604,9 @@ abstract class Forminator_Field {
 			} else {
 
 				$html .= sprintf(
-					'<label for="%s" class="forminator-label">%s</label>',
+					'<label for="%s" id="%s" class="forminator-label">%s</label>',
 					$get_id,
+					$get_id . '-label',
 					esc_html( $label )
 				);
 
@@ -621,6 +646,11 @@ abstract class Forminator_Field {
 		_deprecated_function( 'create_simple_select', '1.6.1', 'create_select' );
 
 		$html   = '';
+
+		$get_id = uniqid( 'forminator-select-' );
+
+		! empty( $description ) ? $attr['aria-describedby'] = $get_id . '-description' : '';
+
 		$markup = self::implode_attr( $attr );
 
 		if ( self::get_post_data( $attr['name'], false ) ) {
@@ -634,7 +664,7 @@ abstract class Forminator_Field {
 		$html .= '</select>';
 
 		if ( ! empty( $description ) ) {
-			$html .= self::get_description( $description );
+			$html .= self::get_description( $description, $get_id );
 		}
 
 		return apply_filters( 'forminator_field_create_simple_select', $html, $attr, $options, $value, $description );
@@ -1226,6 +1256,26 @@ abstract class Forminator_Field {
 	}
 
 	/**
+	 * Get subfield id.
+	 *
+	 * @param string $id Field ID.
+	 * @param string $prefix Field prefix.
+	 * @return string
+	 */
+	protected static function get_subfield_id( $id, $prefix ) {
+		$parts    = explode( '-', $id );
+		$real_id  = implode( '-', array_slice( $parts, 0, 2 ) );
+		$group_id = implode( '-', array_slice( $parts, 2 ) );
+
+		$subfield_id = $real_id . $prefix;
+		if ( $group_id ) {
+			$subfield_id .= '-' . $group_id;
+		}
+
+		return $subfield_id;
+	}
+
+	/**
 	 * Return field ID
 	 *
 	 * @since 1.0
@@ -1439,7 +1489,13 @@ abstract class Forminator_Field {
 	 * @return array|mixed|string
 	 */
 	public function maybe_autofill( $field_array, $field_data, $settings ) {
-		if ( isset( $settings['form-type'] ) && in_array( $settings['form-type'], array( 'registration', 'login' ), true ) ) {
+		if (
+			(
+				isset( $settings['form-type'] ) &&
+				in_array( $settings['form-type'], array( 'registration', 'login' ), true )
+			) ||
+			! is_user_logged_in()
+		) {
 			return $field_data;
 		}
 
@@ -1894,6 +1950,18 @@ abstract class Forminator_Field {
 	}
 
 	/**
+	 * Check index and htaccess files inside root directory. And create them if need it.
+	 */
+	public static function check_upload_root_index_file() {
+		$upload_root = forminator_upload_root();
+		// Make sure it was not called before WP init.
+		if ( ! file_exists( $upload_root . 'index.php' ) && function_exists( 'insert_with_markers' ) ) {
+			self::add_index_file( $upload_root );
+			self::add_htaccess_file();
+		}
+	}
+
+	/**
 	 * Create index file
 	 *
 	 * @param $dir
@@ -1940,10 +2008,7 @@ abstract class Forminator_Field {
 			return;
 		}
 
-		if ( ! file_exists( $upload_root . 'index.php' ) ) {
-			self::add_index_file( $upload_root );
-			self::add_htaccess_file();
-		}
+		self::check_upload_root_index_file();
 		if ( ! file_exists( forminator_get_upload_path( $form_id ) . 'index.php' ) ) {
 			self::add_index_file( forminator_get_upload_path( $form_id ) );
 		}
@@ -1958,6 +2023,12 @@ abstract class Forminator_Field {
 	 * @return void
 	 */
 	public static function add_htaccess_file() {
+		global $wp_locale_switcher;
+
+		// Return if $wp_locale_switcher is not ready.
+		if ( ! $wp_locale_switcher ) {
+			return false;
+		}
 
 		$upload_root = forminator_upload_root();
 
@@ -1997,9 +2068,6 @@ abstract class Forminator_Field {
 		 */
 		$rules = apply_filters( 'forminator_upload_root_htaccess_rules', $rules );
 		if ( ! empty( $rules ) ) {
-			if ( ! function_exists( 'insert_with_markers' ) ) {
-				require_once( ABSPATH . 'wp-admin/includes/misc.php' );
-			}
 			insert_with_markers( $htaccess_file, 'Forminator', $rules );
 		}
 	}

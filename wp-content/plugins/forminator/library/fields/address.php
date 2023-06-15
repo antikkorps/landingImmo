@@ -173,7 +173,7 @@ class Forminator_Address extends Forminator_Field {
 		$html        = '';
 		$cols        = 12;
 		$id          = self::get_property( 'element_id', $field );
-		$name        = $id;
+		$address_id  = self::get_subfield_id( $id, '-' . $slug );
 		$required    = self::get_property( $slug . '_required', $field, false, 'bool' );
 		$ariareq     = 'false';
 		$enabled     = self::get_property( $slug, $field );
@@ -185,9 +185,9 @@ class Forminator_Address extends Forminator_Field {
 
 		$address = array(
 			'type'          => 'text',
-			'name'          => $name . '-' . $slug,
+			'name'          => $address_id,
 			'placeholder'   => $this->sanitize_value( self::get_property( $slug . '_placeholder', $field ) ),
-			'id'            => 'forminator-field-' . $slug . '-' . $name . '_' . Forminator_CForm_Front::$uid,
+			'id'            => 'forminator-field-' . $address_id . '_' . Forminator_CForm_Front::$uid,
 			'class'         => 'forminator-input',
 			'data-required' => $required,
 			'aria-required' => $ariareq,
@@ -241,6 +241,8 @@ class Forminator_Address extends Forminator_Field {
 		$html           = '';
 		$cols           = 12;
 		$id             = self::get_property( 'element_id', $field );
+		$city_id        = self::get_subfield_id( $id, '-city' );
+		$state_id       = self::get_subfield_id( $id, '-state' );
 		$city           = self::get_property( 'address_city', $field, false );
 		$state          = self::get_property( 'address_state', $field, false );
 		$city_desc      = self::get_property( 'address_city_description', $field );
@@ -273,9 +275,9 @@ class Forminator_Address extends Forminator_Field {
 
 				$city_data = array(
 					'type'          => 'text',
-					'name'          => $id . '-city',
+					'name'          => $city_id,
 					'placeholder'   => $this->sanitize_value( self::get_property( 'address_city_placeholder', $field ) ),
-					'id'            => 'forminator-field-city-' . $id . '_' . Forminator_CForm_Front::$uid,
+					'id'            => 'forminator-field-' . $city_id . '_' . Forminator_CForm_Front::$uid,
 					'class'         => 'forminator-input',
 					'data-required' => $city_required,
 					'aria-required' => $city_ariareq,
@@ -313,9 +315,9 @@ class Forminator_Address extends Forminator_Field {
 
 				$state_data = array(
 					'type'          => 'text',
-					'name'          => $id . '-state',
+					'name'          => $state_id,
 					'placeholder'   => $this->sanitize_value( self::get_property( 'address_state_placeholder', $field ) ),
-					'id'            => 'forminator-field-state-' . $id . '_' . Forminator_CForm_Front::$uid,
+					'id'            => 'forminator-field-' . $state_id . '_' . Forminator_CForm_Front::$uid,
 					'class'         => 'forminator-input',
 					'data-required' => $state_required,
 					'aria-required' => $state_ariareq,
@@ -369,6 +371,8 @@ class Forminator_Address extends Forminator_Field {
 		$html            = '';
 		$cols            = 12;
 		$id              = self::get_property( 'element_id', $field );
+		$zip_id          = self::get_subfield_id( $id, '-zip' );
+		$country_id      = self::get_subfield_id( $id, '-country' );
 		$address_zip     = self::get_property( 'address_zip', $field, false );
 		$address_country = self::get_property( 'address_country', $field, false );
 		$zip_desc        = self::get_property( 'address_zip_description', $field );
@@ -399,9 +403,9 @@ class Forminator_Address extends Forminator_Field {
 
 				$zip_data = array(
 					'type'        => 'text',
-					'name'        => $id . '-zip',
+					'name'        => $zip_id,
 					'placeholder' => $this->sanitize_value( self::get_property( 'address_zip_placeholder', $field ) ),
-					'id'          => 'forminator-field-zip-' . $id . '_' . Forminator_CForm_Front::$uid,
+					'id'          => 'forminator-field-' . $zip_id . '_' . Forminator_CForm_Front::$uid,
 					'class'       => 'forminator-input',
 				);
 
@@ -436,8 +440,8 @@ class Forminator_Address extends Forminator_Field {
 			if ( $address_country ) {
 
 				$country_data = array(
-					'name'             => $id . '-country',
-					'id'               => 'forminator-form-' . $this->form_settings['form_id'] . '__field--' . $id . '_' . Forminator_CForm_Front::$uid,
+					'name'             => $country_id,
+					'id'               => 'forminator-form-' . $this->form_settings['form_id'] . '__field--' . $country_id . '_' . Forminator_CForm_Front::$uid,
 					'class'            => 'forminator-select2',
 					'data-search'      => 'true',
 					'data-placeholder' => __( 'Select country', 'forminator' ),

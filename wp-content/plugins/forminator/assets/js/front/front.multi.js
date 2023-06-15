@@ -263,7 +263,7 @@
 				self.maybeRemoveDuplicateFields( form_selector );
 			});
 
-			// We have to declate initialData here, after everything has been set initially, to prevent triggering change event.
+			// We have to declare initialData here, after everything has been set initially, to prevent triggering change event.
 			var initialData	= saveDraftExists ? this.$el.serializeArray() : '';
 			this.$el.find( ".forminator-field input, .forminator-row input[type=hidden], .forminator-field select, .forminator-field textarea, .forminator-field-signature").on( 'change input', function (e) {
 				if ( saveDraftExists && $saveDraft.hasClass( 'disabled' ) ) {
@@ -587,6 +587,14 @@
 							}
 						});
 					}
+
+					var dialCode = '+' + $(this).intlTelInput('getSelectedCountryData').dialCode;
+
+					new Cleave(this, {
+						phone: true,
+						phoneRegionCode: 'undefined' !== typeof ( country ) ? country : 'us',
+						prefix: ('enabled' === is_national_phone) ? dialCode : null,
+					});
 
 					if ( ! is_material ) {
 						$(this).closest( '.forminator-field' ).find( 'div.iti' ).addClass( 'forminator-phone' );
@@ -932,7 +940,7 @@
 
 					if ($limit.length) {
 						if ($limit.data('limit')) {
-							var field_value = sanitize_text_field( $(this).val() );
+							var field_value = $(this).val().replace( /<[^>]*>/g, '' );
 							if ($limit.data('type') !== "words") {
 								count = $( '<div>' + field_value + '</div>' ).text().length;
 							} else {
@@ -987,6 +995,7 @@
 					$( this ).change( function ( e ) {
 						this.value = parseFloat( this.value ).toFixed( decimals );
 					});
+					$( this ).trigger( 'change' );
 				}
 				/*
 				* If you need to retrieve the formatted (masked) value, you can use something like this:
@@ -1199,7 +1208,6 @@
 		},
 
 		upload_field: function ( form_selector ) {
-
 			var self = this,
 			    form = $( form_selector )
 			;
@@ -1234,6 +1242,7 @@
 				self.toggle_file_input();
 			});
 
+			form.find( '.forminator-button-upload' ).off();
 			form.find( '.forminator-button-upload' ).on( 'click', function (e) {
 				e.preventDefault();
 
@@ -1500,9 +1509,14 @@
 			var self = this;
 			if ( 'undefined' !== typeof DiviArea ) {
 				DiviArea.addAction( 'show_area', function( area ) {
-					self.init();
-					forminatorSignInit();
-					forminatorSignatureResize();
+					setTimeout(
+						function() {
+							self.init();
+							forminatorSignInit();
+							forminatorSignatureResize();
+						},
+						100
+					);
 				});
 			}
 		},
@@ -1555,8 +1569,7 @@
 	// hook from wp_editor tinymce
 	$(document).on('tinymce-editor-init', function (event, editor) {
 		var editor_id = editor.id,
-			$field = $('#' + editor_id ).closest('.forminator-col'),
-			$limit = $field.find('.forminator-description span')
+			$field = $('#' + editor_id ).closest('.forminator-col')
 		;
 
 		// trigger editor change to save value to textarea,
@@ -1573,16 +1586,16 @@
 				editor.save();
 				$field.find( '#' + editor_id ).trigger( 'change' );
 			}
+		});
 
-			if ($limit.length) {
-				if ($limit.data('limit')) {
-					if ($limit.data('type') !== "words") {
-						count = editor.getContent({ format: 'text' }).length;
-					} else {
-						count = editor.getContent({ format: 'text' }).split(/\s+/).length;
-					}
-					$limit.html(count + ' / ' + $limit.data('limit'));
-				}
+		// Trigger onblur.
+		editor.on( 'blur', function () {
+			// only forminator
+			if (
+				-1 !== editor_id.indexOf( 'forminator-field-textarea-' ) ||
+				-1 !== editor_id.indexOf( 'forminator-field-post-content-' )
+			) {
+				$field.find( '#' + editor_id ).valid();
 			}
 		});
 

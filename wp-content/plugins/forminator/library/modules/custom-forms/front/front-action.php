@@ -726,6 +726,9 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 				$stripe_entry_data = apply_filters( 'forminator_custom_form_stripe_entry_data', $stripe_entry_data, self::$module_object, $field, self::$info['field_data_array'] );
 
 				forminator_maybe_log( __METHOD__, $stripe_entry_data['value'] );
+				if ( is_wp_error( $stripe_entry_data['value'] ) ) {
+					throw new Exception( $stripe_entry_data['value']->get_error_message() );
+				}
 				if ( ! empty( $stripe_entry_data['value']['error'] ) ) {
 					throw new Exception( $stripe_entry_data['value']['error'] );
 				}
@@ -983,7 +986,7 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 	 */
 	private static function save_entry_fields( $entry ) {
 		self::remove_password();
-		self::handle_hidden_fields_after_entry_save( $entry );
+		self::handle_hidden_fields_after_entry_save( $entry, self::$module_id );
 
 		/**
 		 * Action called before setting fields to database
@@ -1280,23 +1283,9 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 			self::$response_attrs['newtab'] = esc_html( $newtab );
 		}
 
-		if ( ( ! isset( $tab_value ) || 'newtab_thankyou' === $tab_value ) && ! empty( $behavior_options['thankyou-message'] ) ) {
-			/**
-			 * Filter thankyou message
-			 *
-			 * @since 1.11
-			 *
-			 * @param string $behavior_options ['thankyou-message'].
-			 * @param array $submitted_data
-			 * @param Forminator_Form_Model $custom_form
-			 *
-			 * @return string
-			 */
-			$behavior_options['thankyou-message'] = apply_filters( 'forminator_custom_form_thankyou_message', $behavior_options['thankyou-message'], $custom_form );
-			// replace form data vars with value.
-			$thankyou_message = forminator_replace_form_data( $behavior_options['thankyou-message'], $custom_form, $entry, true );
-			// replace misc data vars with value.
-			$thankyou_message                = forminator_replace_variables( $thankyou_message, self::$module_id );
+		$thankyou_message = self::get_thankyou_message( $custom_form, $behavior_options, $entry );
+
+		if ( ( ! isset( $tab_value ) || 'newtab_thankyou' === $tab_value ) && ! empty( $thankyou_message ) ) {
 			self::$response_attrs['message'] = $thankyou_message;
 			if ( ! empty( $behavior_options['autoclose'] ) ) {
 				self::$response_attrs['fadeout']      = $behavior_options['autoclose'];
@@ -1304,6 +1293,46 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 						? $behavior_options['autoclose-time'] * 1000 : 0;
 			}
 		}
+	}
+
+	/**
+	 * Get "Thank you" message
+	 *
+	 * @param object $custom_form Custom form.
+	 * @param array  $behavior_options Releavant behavior options.
+	 * @param object $entry Entry object.
+	 * @return type
+	 */
+	private static function get_thankyou_message( $custom_form, $behavior_options, $entry ) {
+
+		if ( ! empty( $custom_form->settings['activation-method'] )
+			&& isset( $behavior_options[ $custom_form->settings['activation-method'] . '-thankyou-message' ] )
+		) {
+			$thankyou_message = $behavior_options[ $custom_form->settings['activation-method'] . '-thankyou-message' ];
+		} elseif ( isset( $behavior_options['thankyou-message'] ) ) {
+			$thankyou_message = $behavior_options['thankyou-message'];
+		} else {
+			$thankyou_message = '';
+		}
+
+		/**
+		 * Filter thankyou message
+		 *
+		 * @since 1.11
+		 *
+		 * @param string $thankyou_message "Thank you" message.
+		 * @param array $submitted_data
+		 * @param Forminator_Form_Model $custom_form
+		 *
+		 * @return string
+		 */
+		$thankyou_message = apply_filters( 'forminator_custom_form_thankyou_message', $thankyou_message, $custom_form );
+		// replace form data vars with value.
+		$thankyou_message = forminator_replace_form_data( $thankyou_message, $custom_form, $entry, true );
+		// replace misc data vars with value.
+		$message = forminator_replace_variables( $thankyou_message, self::$module_id );
+
+		return $message;
 	}
 
 	/**
@@ -1796,11 +1825,18 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 							$method = 'handle_' . $field_type . '_field';
 							if ( method_exists( self::class, $method ) ) {
 								if ( ! $group_suffix ) {
-									self::$method( $field_settings );
+									$dependent_fields = self::$method( $field_settings );
 								} else {
 									$cloned_field_settings                = $field_settings;
 									$cloned_field_settings['element_id'] .= $group_suffix;
-									self::$method( $cloned_field_settings );
+									$dependent_fields                     = self::$method( $cloned_field_settings );
+								}
+								if ( is_array( $dependent_fields ) && $dependent_fields ) {
+									$depends = self::dependencies_not_ready( $dependent_fields, $visible_fields );
+									if ( $depends ) {
+										$unspecified[ $field_id . $group_suffix ] = true;
+										unset( $visible_fields[ $field_id . $group_suffix ], self::$prepared_data[ $field_id . $group_suffix ] );
+									}
 								}
 							}
 						}
@@ -2108,13 +2144,18 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 		if ( empty( $custom_vars ) || empty( $custom_meta ) || self::$is_draft ) {
 			return;
 		}
+		$dependent_fields = array();
 		foreach ( $custom_meta as $meta ) {
 			$value = ! empty( $meta['value'] ) ? trim( $meta['value'] ) : '';
 			$label = $meta['label'];
 
 			if ( strpos( $value, '{' ) !== false && strpos( $value, '{upload' ) === false ) {
-				$value = forminator_replace_form_data( $value, self::$module_object );
-				$value = forminator_replace_variables( $value, self::$module_id );
+				$prepared_value  = forminator_replace_form_data( $value, self::$module_object );
+				$replaced_fields = self::get_replaced_fields( $value, $prepared_value );
+				if ( $replaced_fields ) {
+					$dependent_fields = array_merge( $dependent_fields, $replaced_fields );
+				}
+				$value = forminator_replace_variables( $prepared_value, self::$module_id );
 			} elseif ( isset( self::$prepared_data[ $value ] ) ) {
 				$value = self::$prepared_data[ $value ];
 			}
@@ -2133,6 +2174,8 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 				'value' => $value,
 			);
 		}
+
+		return array_unique( $dependent_fields );
 	}
 
 	/**
@@ -2230,13 +2273,7 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 		foreach ( $fields as $key => $field ) {
 			if (
 				! isset( $field['field_type'] ) ||
-				'upload' !== $field['field_type'] ||
-				(
-					isset( $field['value'] ) &&
-					isset( $field['value']['file'] ) &&
-					isset( $field['value']['file']['success'] ) &&
-					$field['value']['file']['success']
-				)
+				'upload' !== $field['field_type'] 
 			) {
 				continue;
 			}
@@ -2280,7 +2317,10 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 				self::$prepared_data[ $field_id ]['file']                = $upload_data;
 				self::$info['field_data_array'][ $key ]['value']['file'] = $upload_data;
 
-				if ( 'transfer' === $mode ) {
+				if (
+					( 'single' === $file_type && ! self::$has_payment ) ||
+					'transfer' === $mode
+				) {
 					// If upload is successful, add the upload data to custom field if tag is present.
 					if ( ! empty( self::$info['upload_in_customfield'] ) ) {
 						$file_url = $upload_data['file_url'];
@@ -2341,9 +2381,10 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 	 */
 	private static function handle_hidden_field( $field_settings ) {
 		if ( ! empty( $field_settings['element_id'] ) && ! empty( $field_settings['default_value'] ) ) {
+            $exclude_key = array( 'query', 'embed_id', 'embed_title', 'embed_url' );
 			if ( 'submission_time' === $field_settings['default_value'] ) {
 				self::$prepared_data[ $field_settings['element_id'] ] = date_i18n( 'g:i:s a, T', forminator_local_timestamp(), true );
-			} else if ( 'query' !== $field_settings['default_value'] ) {
+			} else if ( ! in_array( $field_settings['default_value'], $exclude_key, true ) ) {
 				$form_field_obj = Forminator_Core::get_field_object( 'hidden' );
 				self::$prepared_data[ $field_settings['element_id'] ] = esc_html( $form_field_obj->get_value( $field_settings ) );
 			}
@@ -2355,12 +2396,47 @@ class Forminator_CForm_Front_Action extends Forminator_Front_Action {
 	 *
 	 * @param array $field_settings Field settings.
 	 */
-	private static function handle_hidden_fields_after_entry_save( $entry ) {
+	private static function handle_hidden_fields_after_entry_save( $entry, $module_id = null ) {
 		foreach( self::$info['field_data_array'] as $key => $field ) {
-			if ( 0 === strpos( $field['name'], 'hidden-' ) && 'submission_id' === $field['value'] ) {
-				self::$info['field_data_array'][ $key ]['value'] = $entry->entry_id;
+			if ( 0 === strpos( $field['name'], 'hidden-' ) ) {
+				switch ( $field['field_array']['default_value'] ) {
+					case 'custom_value':
+						self::$info['field_data_array'][ $key ]['value'] = esc_html( $field['field_array']['custom_value'] );
+						break;
+
+					default:
+						self::$info['field_data_array'][ $key ]['value'] = trim(
+							forminator_replace_variables(
+								'{' . $field['value'] . '}',
+								self::$module_id,
+								$entry
+							),
+							'{}'
+						);
+						break;
+				}
 			}
 		}
+	}
+
+	/**
+	 * Get replaved fields by forminator_replace_form_data method
+	 *
+	 * @param string $old_value Old value.
+	 * @param string $new_value New value.
+	 * @return array
+	 */
+	private static function get_replaced_fields( $old_value, $new_value ) {
+		$replaced_fields = array();
+		if ( $old_value === $new_value ) {
+			return $replaced_fields;
+		}
+		$pattern = '/{([^}]+)}/';
+		preg_match_all( $pattern, $old_value, $matches1 );
+		preg_match_all( $pattern, $new_value, $matches2 );
+		$replaced_fields = array_diff( $matches1[1], $matches2[1] );
+
+		return $replaced_fields;
 	}
 
 	/**

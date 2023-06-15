@@ -52,9 +52,13 @@ class Forminator_CForm_New_Page extends Forminator_Admin_Page {
 		$style_version = '4.0.3';
 
 		$script_src     = forminator_plugin_url() . 'assets/js/library/intlTelInput.min.js';
+		$script_src_cleave     = forminator_plugin_url() . 'assets/js/library/cleave.min.js';
+		$script_src_cleave_phone     = forminator_plugin_url() . 'assets/js/library/cleave-phone.i18n.js';
 		$script_version = FORMINATOR_VERSION;
 		wp_enqueue_style( 'intlTelInput-forminator-css', $style_src, array(), $style_version ); // intlTelInput.
 		wp_enqueue_script( 'forminator-intlTelInput', $script_src, array( 'jquery' ), $script_version, false ); // intlTelInput.
+		wp_enqueue_script( 'forminator-cleave', $script_src_cleave, array( 'jquery' ), $script_version, false ); // intlTelInput.
+		wp_enqueue_script( 'forminator-cleave-phone', $script_src_cleave_phone, array( 'jquery' ), $script_version, false ); // intlTelInput.
 
 		wp_enqueue_script(
 			'forminator-field-datepicker-range',

@@ -1,13 +1,13 @@
 === Forminator - Contact Form, Payment Form & Custom Form Builder ===
 Plugin Name: Forminator - Contact Form, Payment Form & Custom Form Builder
-Version: 1.23.3
+Version: 1.24.1
 Author: WPMU DEV
 Author URI: https://wpmudev.com/
 Contributors: WPMUDEV
 Tags: forms, contact form, wordpress form plugin, payment form, custom form, form builder, paypal form wordpress, form maker, quiz, quiz builder, order form, stripe payments, paypal payments, stripe form, paypal form
 Requires at least: 5.2
 Tested up to: 6.2
-Stable tag: 1.23.3
+Stable tag: 1.24.1
 Requires PHP: 5.6.20
 License: GPL v2 - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
@@ -218,6 +218,76 @@ Find out all you need to know by checking out our API documentation [here](https
 9. Allow simple drag and drop multi-file uploads for users.
 
 == Changelog ==
+
+= 1.24.1 ( 2023-06-05 ) =
+
+- Improvement: Option to change the size of radio/checkbox images
+- Improvement: Add filter to change the upload path
+- Improvement: Phone field input validation
+- Improvement: Add alt text to images on quiz answers
+- Improvement: Added new notice that reports only data from live payments on the report page
+- Fix: Uploading a single file is prevented by the payments field, resulting in a 404 error
+- Fix: HTML field content is stripped of anchor tag target property
+- Fix: Conflict with Norebro theme
+- Fix: Dropdown styling in different languages
+- Fix: Delete Alert box design
+- Fix: Compatibility with PHP 8.1 and 8.2
+- Fix: Timepicker Field Default Minutes issues when the value is 0
+- Fix: The E-Signature label overlaps the placeholder when using the Material preset on Forms
+- Fix: Select input doesn't show the dropdown menu on the oxygen builder
+- Fix: Defender Masked login area does not work with Lost your password option in the login form
+- Fix: Google Lighthouse Aria labels
+- Fix: Defender login recaptcha verification fails with Forminator recaptcha
+- Fix: Incorrect Stripe charges if the field Visibility is hidden
+- Fix: Issues with form submission when 'Multiple' is selected in the Name field
+- Fix: Upload field mapped to the custom field does not include file URL in the post data field
+- Fix: Captcha language cannot be set back to Automatic after language is set on the captcha
+- Fix: Stripe's field meta does not display all address fields when changed on forms
+- Fix: Textarea does not recognize the max character limit when a field is required and rich-text editor is enabled on forms
+- Fix: URL redirection when the dynamic field value is used
+- Fix: The AJAX method can fail to upload multiple files if one of the files is invalid or the form was submitted too soon
+- Fix: Autofill is not allowing the form to be sent
+- Fix: Submission retention reset to Custom and 0 days
+- Fix: Unused/old CSS filling the server
+- Fix: Adding HTTP to email body URLs
+- Fix: Registration form default submissions text doesn't change after the edit
+- Fix: TinyMCE is not working in pagination when set to required and loaded using Ajax
+- Fix: Account registration successful message is not working for manual activation
+- Fix: ACF and file upload field in the registration form
+- Fix: The form added in the Elementor popup is not submitting
+- Fix: Issues with conditional logic
+- Fix: Form is not showing conflict with All in One SEO
+- Fix: Registration emails are not translated
+- Fix: Stripe 3D secure payment is not working with page reload
+- Fix: Uncaught Error: Call to a member function switch_to_locale() on null
+- Fix: UI issue on recipients tab on adding multiple recipients
+- Fix: Rich edit textarea values are stripped of HTML if post data custom fields have rich edit textarea
+- Fix: Submission filters are not applied to CSV export if the filter is user status for registration forms
+- Fix: Email address should be validated for email notification recipients
+- Fix: Power Automate webhook is not working
+- Fix: Form returns a validation error in the Phone number field when Faroes Islands is configured as the default country
+- Fix: Upload file button reloads the page when the form is placed in PopUp for the Divi plugin
+- Fix: If one text field is hidden with visibility based on a select field, both values are added to the post data custom field
+- Fix: When we submit a long lead form, the quiz is not focused
+- Fix: Unable to move the fields in post data custom fields
+- Fix: Site errors getting exported when a form is exported
+- Fix: Forminator always enqueues Roboto font
+- Fix: Conditions for the currency field should match other number fields
+- Fix: The multiple files upload via limit size is not working after removing exceeded files
+- Fix: Scheduled Exports returns "Invalid form type"
+- Fix: Section without a label is not separated in emails
+- Fix: Submit button does not appear if the user removes the submit text from the submit button
+- Fix: Translation issues with Forminator Pro refresh button text
+- Fix: The "Appearance" tab doesn't display the option to change color for the Consent field
+- Fix: No message displayed on form submission, when the lead generation form placement is set to 'Before showing results'
+- Fix: "Embed URL" in the hidden field is incorrect
+- Fix: In the Dashboard, the last submission time ignores polls and quizzes
+- Fix: On multisite, the WordPress Settings link is broken on the Reports Notifications Schedule tab
+- Fix: Aweber subscriber data getting overwritten for existing subscribers
+- Fix: 'Uncaught TypeError createRoot' console error on Form Editor
+- Fix: Submission behavior conditions not working as expected
+- Fix: Double submissions happen on clicking the Submit button twice quickly
+- Fix: Repeated items are missing when a draft is edited and saved again
 
 = 1.23.3 ( 2023-04-12 ) =
 

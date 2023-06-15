@@ -115,6 +115,7 @@ class Forminator_Textarea extends Forminator_Field {
 	public function markup( $field, $views_obj, $draft_value = null ) {
 
 		$settings            = $views_obj->model->settings;
+		$use_ajax_load       = ! empty( $settings['use_ajax_load'] ) || ! empty( $field['parent_group'] );
 		$this->field         = $field;
 		$this->form_settings = $settings;
 
@@ -167,7 +168,7 @@ class Forminator_Textarea extends Forminator_Field {
 		}
 
 		// Add required class if form ajax load is enabled.
-		if ( $required && true === $editor_type && ! empty( $settings['use_ajax_load'] ) ) {
+		if ( $required && true === $editor_type && $use_ajax_load ) {
 			$textarea['class'] .= esc_attr( ' do-validate forminator-wp-editor-required' );
 		}
 
@@ -178,15 +179,23 @@ class Forminator_Textarea extends Forminator_Field {
 		$textarea = array_merge( $textarea, $autofill_markup );
 
 		$html .= '<div class="forminator-field">';
-		if ( true === $editor_type && empty( $settings['use_ajax_load'] ) ) {
-			$html .= self::create_wp_editor( $textarea, $label, '', $required, $default_height );
+		if ( true === $editor_type && ! $use_ajax_load ) {
+			$html .= self::create_wp_editor( $textarea, $label, '', $required, $default_height, $limit );
 			$desc_id = 'forminator-wp-editor-' . $id . '-description';
 		} else {
 			$html .= self::create_textarea( $textarea, $label, '', $required, $design );
 			$desc_id = $id . '-description';
-			if ( true === $editor_type && ! empty( $settings['use_ajax_load'] ) ) {
-				$args  = self::get_tinymce_args( $id );
-				$html .= '<script>wp.editor.initialize("' . esc_attr( $id ) . '", ' . $args . ');</script>';
+			if ( true === $editor_type && $use_ajax_load ) {
+				$args   = self::get_tinymce_args( $id );
+				$script = '<script>wp.editor.initialize("' . esc_attr( $id ) . '", ' . $args . ');</script>';
+				// if it's inside group field and 'Load form using AJAX' option is disabled.
+				if ( empty( $settings['use_ajax_load'] ) && ! empty( $field['parent_group'] ) ) {
+					// wrap into document ready.
+					$script = str_replace( array( '<script>', '</script>' ), array( '<script>jQuery(function() {', '});</script>' ), $script );
+				}
+				$html .= $script;
+
+				Forminator_CForm_Front::$load_wp_enqueue_editor = true;
 			}
 		}
 		// Counter.

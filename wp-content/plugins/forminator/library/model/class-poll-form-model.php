@@ -58,9 +58,10 @@ class Forminator_Poll_Model extends Forminator_Base_Form_Model {
 	 * Check if the vote clause is set up and if a user can vote again
 	 *
 	 * @since 1.0
+	 * @param bool $freeze Optional. Should it prevent parallel requests. False by default.
 	 * @return bool
 	 */
-	public function current_user_can_vote() {
+	public function current_user_can_vote( $freeze = false ) {
 		/**
 		 * Added condition for poll access.
 		 *
@@ -70,7 +71,31 @@ class Forminator_Poll_Model extends Forminator_Base_Form_Model {
 			if ( $this->is_method_browser_cookie() ) {
 				return $this->poll_votes_method_browser_cookie();
 			} else {
-				return $this->poll_votes_method_user_ip();
+				$user_ip      = Forminator_Geo::get_user_ip();
+				$key_requests = 'forminator_request_from_ip_' . $user_ip;
+				// Check if the IP has made a request within the allowed interval.
+				if ( get_transient( $key_requests ) ) {
+					// IP has made a request too soon.
+					$can_vote = false;
+				} else {
+					if ( $freeze ) {
+						/**
+						 * Filter the time interval (in seconds) between consecutive requests allowed per IP
+						 *
+						 * @param int    $seconds Second amount. 10 by default.
+						 * @param string $user_ip Current IP.
+						 */
+						$expiration    = apply_filters( 'forminator_poll_request_interval_seconds', 10, $user_ip );
+						$set_transient = set_transient( $key_requests, 1, $expiration );
+						if ( ! $set_transient ) {
+							// It doesn't set transient for parallel requests.
+							return false;
+						}
+					}
+					$can_vote = $this->poll_votes_method_user_ip();
+				}
+
+				return $can_vote;
 			}
 		}
 

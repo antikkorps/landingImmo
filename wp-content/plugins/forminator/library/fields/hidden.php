@@ -143,6 +143,9 @@ class Forminator_Hidden extends Forminator_Field {
 			case 'embed_url':
 				$value = $embed_url;
 				break;
+			case 'login_url':
+				$value = forminator_get_login_url( $embed_url );
+				break;
 			case 'user_agent':
 				$value = esc_html( $_SERVER['HTTP_USER_AGENT'] );
 				break;

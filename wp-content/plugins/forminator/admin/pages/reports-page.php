@@ -19,6 +19,13 @@ class Forminator_Reports_Page extends Forminator_Admin_Page {
 	private $screen_params = array();
 
 	/**
+	 * Current Form Model
+	 *
+	 * @var null|Forminator_Base_Form_Model
+	 */
+	private $form_model = null;
+
+	/**
 	 * Get Form types based on available modules
 	 *
 	 * @return mixed

@@ -210,6 +210,20 @@ class Forminator_Admin_Report_Page {
 	}
 
 	/**
+	 * Check payment
+	 *
+	 * @return bool
+	 */
+	public static function has_payments( $form_id ) {
+		$model = Forminator_Base_Form_Model::get_model( $form_id );
+		if ( is_object( $model ) && $model->has_stripe_or_paypal() ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get module slug
 	 *
 	 * @param $form_type

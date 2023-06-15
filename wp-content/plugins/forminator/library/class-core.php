@@ -451,6 +451,8 @@ class Forminator_Core {
 			'variations',
 			'question_description',
 			'thankyou-message',
+			'email-thankyou-message',
+			'manual-thankyou-message',
 			'user-email-editor',
 			'admin-email-editor',
 			'quiz_description',
@@ -483,7 +485,12 @@ class Forminator_Core {
 			return trim( wp_kses_post( $data ) );
 		}
 
-		if ( 'custom_css' === $current_key ) {
+		// Allow line breaks.
+		$allow_linebreaks = array(
+			'custom_css',
+			'placeholder',
+		);
+		if ( in_array( $current_key, $allow_linebreaks, true ) ) {
 			return sanitize_textarea_field( $data );
 		}
 

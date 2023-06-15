@@ -330,9 +330,15 @@ abstract class Forminator_Mail {
 		$subject       = wp_strip_all_tags( $subject );
 		$this->subject = $subject;
 
-		$message       = stripslashes( $this->message );
-		$message       = wpautop( $message );
-		$message       = make_clickable( $message );
+		$message = make_clickable( wpautop( stripslashes( $this->message ) ) );
+
+		/**
+		 * Filter email body that will be sent by Forminator Mailer
+		 *
+		 * @param string $message
+		 */
+		$message = apply_filters( 'forminator_email_message', $message );
+
 		$this->message = $message;
 	}
 

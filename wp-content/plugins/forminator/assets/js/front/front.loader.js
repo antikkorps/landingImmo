@@ -72,6 +72,7 @@
 			}
 
 			this.load_ajax(param);
+			this.handleDiviPopup();
 
 		},
 		load_ajax: function (param) {
@@ -339,7 +340,23 @@
 					forminatorFront.hide();
 				}
 			}
-		}
+		},
+
+		handleDiviPopup: function () {
+			var self = this;
+
+			if ( 'undefined' !== typeof DiviArea ) {
+				DiviArea.addAction( 'show_area', function( area ) {
+					var $form = area.find( '#' + self.element.id );
+
+					if ( 0 !== $form.length ) {
+						self.frontInitCalled = false;
+						self.init_front();
+						forminator_render_hcaptcha();
+					}
+				});
+			}
+		},
 	});
 
 	// A really lightweight plugin wrapper around the constructor,

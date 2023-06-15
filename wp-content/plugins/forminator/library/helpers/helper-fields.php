@@ -122,16 +122,20 @@ function forminator_sanitize_field( &$field, $key = null ) {
  * @return mixed
  */
 function forminator_sanitize_array_field( $fields ) {
+	$allow_html = array(
+		'consent_description',
+		'variations',
+		'sc_message',
+		'hc_invisible_notice',
+		'ticket_description',
+		'value',
+	);
+
 	foreach ( $fields as $key => &$value ) {
 		if ( is_array( $value ) ) {
 			$value = forminator_sanitize_array_field( $value );
 		} else {
-			if ( 'consent_description' === $key
-				 || 'variations' === $key
-			     || 'hc_invisible_notice' === $key
-			     || 'sc_message' === $key
-				 || 'ticket_description' === $key
-			) {
+			if ( in_array( $key, $allow_html, true ) ) {
 				$value = wp_kses_post( $value );
 			} elseif ( 'card_description' === $key
 					   || 'gdpr_text' === $key
@@ -497,7 +501,7 @@ function forminator_clear_field_id( $string ) {
  * @param bool $get_labels Optional. Set true for getting labels instead of values for select, radio and checkbox.
  * @return mixed
  */
-function forminator_replace_form_data( $content, Forminator_Form_Model $custom_form = null, Forminator_Form_Entry_Model $entry = null, $get_labels = false, $urlencode = false ) {
+function forminator_replace_form_data( $content, Forminator_Form_Model $custom_form = null, Forminator_Form_Entry_Model $entry = null, $get_labels = false, $urlencode = false, $user_meta = false ) {
 	$data             = Forminator_CForm_Front_Action::$prepared_data;
 	$matches          = array();
 	$field_types      = Forminator_Core::get_field_types();
@@ -531,7 +535,7 @@ function forminator_replace_form_data( $content, Forminator_Form_Model $custom_f
 						|| strpos( $element_id, 'section' ) !== false
 						|| strpos( $element_id, 'signature' ) !== false )
 					&& $custom_form && $entry ) {
-				$value = forminator_get_field_from_form_entry( $element_id, $custom_form, $entry );
+				$value = forminator_get_field_from_form_entry( $element_id, $custom_form, $entry, $user_meta );
 
 				if ( strpos( $element_id, 'html' ) !== false ) {
 					$value = forminator_replace_form_data( $value, $custom_form, $entry, $get_labels );
@@ -621,7 +625,7 @@ function forminator_replace_field_data( $custom_form, $element_id, $data, $quiz_
 			}
 
 			$selected_values 	= is_array( $field_value ) ? $field_value : array( $field_value );
-			
+
 			if ( is_array( $field_value ) ) {
 				$value = array_keys( array_intersect( $field_options , array_map( 'stripslashes', $selected_values ) ) );
 			} else {
@@ -739,11 +743,9 @@ function forminator_prepare_formatted_form_entry( Forminator_Form_Model $custom_
 
 		if ( 'section' === $field_type ) {
 			$value = $form_field->__get( 'section_title' );
-			if ( ! empty( $value ) ) {
-				$html .= '</ol>';
-				$html .= '<h4><b>' . $value . '</b></h4>';
-				$html .= '<ol>';
-			}
+			$html .= '</ol>';
+			$html .= '<h4><b>' . (string) $value . '</b></h4>';
+			$html .= '<ol>';
 		} elseif ( 'html' === $field_type ) {
 			$label   = $form_field->__get( 'field_label' );
 			$value   = $form_field->__get( 'variations' );
@@ -835,18 +837,21 @@ function forminator_get_formatted_form_non_empty_entry( Forminator_Form_Model $c
  * Get field from registered entries
  *
  * @since 1.0.5
+ * @since 1.24  Added $user_meta
  *
  * @param                               $element_id
  * @param Forminator_Form_Model       $custom_form
  * @param Forminator_Form_Entry_Model $entry
+ * @param bool                        $user_meta Check if usage is for user meta.
  *
  * @return string
  */
-function forminator_get_field_from_form_entry( $element_id, Forminator_Form_Model $custom_form, Forminator_Form_Entry_Model $entry ) {
+function forminator_get_field_from_form_entry( $element_id, Forminator_Form_Model $custom_form, Forminator_Form_Entry_Model $entry, $user_meta = false ) {
 	$form_fields = $custom_form->get_fields();
 	if ( is_null( $form_fields ) ) {
 		$form_fields = array();
 	}
+
 	foreach ( $form_fields as $form_field ) {
 		/** @var  Forminator_Form_Field_Model $form_field */
 		if ( $form_field->slug !== $element_id ) {
@@ -858,6 +863,8 @@ function forminator_get_field_from_form_entry( $element_id, Forminator_Form_Mode
 		} elseif ( 'html' === $field_type ) {
 			$variations = $form_field->__get( 'variations' );
 			$value      = forminator_replace_variables( $variations, $custom_form->id );
+		} elseif ( 'upload' === $field_type && $user_meta ) {
+			$value = render_entry( $entry, $form_field->slug, null, '', false, true );
 		} else {
 			$value = render_entry( $entry, $form_field->slug );
 		}
@@ -1110,16 +1117,19 @@ function forminator_replace_variables( $content, $id = false, $entry = null ) {
  * TODO: refactor this
  *
  * @since 1.0
+ * @since 1.24 Added $att_id_only param.
  *
  * @param object $item        - the entry.
  * @param string $column_name - the column name.
  *
  * @param null   $field       @since 1.0.5, optional Forminator_Form_Field_Model.
  * @param string $type
+ * @param bool   $remove_empty
+ * @param bool   $att_id_only  If output needs attachment ID only. E.g. when upload field is used with ACF file type.
  *
  * @return string
  */
-function render_entry( $item, $column_name, $field = null, $type = '', $remove_empty = false ) {
+function render_entry( $item, $column_name, $field = null, $type = '', $remove_empty = false, $att_id_only = false ) {
 	$data = $item->get_meta( $column_name, '' );
 
 	$is_calculation = false;
@@ -1149,7 +1159,18 @@ function render_entry( $item, $column_name, $field = null, $type = '', $remove_e
 				foreach ( $data as $key => $value ) {
 					if ( is_array( $value ) ) {
 						if ( 'file' === $key && isset( $value['file_url'] ) ) {
-							$file_urls = is_array( $value['file_url'] ) ? $value['file_url'] : array( $value['file_url'] );
+
+							if ( is_array( $value['file_url'] ) ) {
+								$file_urls = $value['file_url'];
+							} else {
+								// If only attachment ID is needed like for ACF file type.
+								if ( $att_id_only ) {
+									return attachment_url_to_postid( $value['file_url'] );
+								}
+
+								$file_urls = array( $value['file_url'] );
+							}
+
 							$files_count = count( $file_urls );
 							foreach ( $file_urls as $index => $file_url ) {
 								$file_name = basename( $file_url );
@@ -1418,7 +1439,7 @@ function render_entry( $item, $column_name, $field = null, $type = '', $remove_e
 						$output = substr( trim( $output ), 0, - 1 );
 
 					}
-				} else {
+				} elseif ( is_array( $data ) ) {
 					$output = implode( ', ', $data );
 				}
 			}
@@ -1897,7 +1918,6 @@ function forminator_get_ext_types() {
 			'tsv'                => 'text/tab-separated-values',
 			'ics'                => 'text/calendar',
 			'rtx'                => 'text/richtext',
-			'css'                => 'text/css',
 			'rtf'                => 'application/rtf',
 			'vtt'                => 'text/vtt',
 			'dfxp'               => 'application/ttaf+xml',
@@ -2383,32 +2403,6 @@ function forminator_upload_root_temp() {
 }
 
 /**
- * Forminator upload url
- *
- * @return string|null
- */
-function forminator_upload_root_url() {
-	$dir = wp_upload_dir();
-
-	if ( $dir['error'] ) {
-		return null;
-	}
-
-	$upload_root = forminator_custom_upload_root();
-	if ( ! empty( $upload_root ) ) {
-		$upload_url = str_replace(
-			wp_normalize_path( untrailingslashit( ABSPATH ) ),
-			site_url(),
-			wp_normalize_path( $upload_root )
-		);
-
-		return esc_url_raw( $upload_url );
-	}
-
-	return $dir['baseurl'] . '/forminator/';
-}
-
-/**
  * Forminator Upload root
  *
  * @return string|null
@@ -2457,7 +2451,20 @@ function forminator_custom_upload_root() {
 function forminator_get_upload_path( $form_id, $dir = '' ) {
 	$form_id = absint( $form_id );
 
-	return forminator_upload_root() . $form_id . '_' . wp_hash( $form_id ) . '/' . $dir;
+	$sub_folder = $form_id . '_' . wp_hash( $form_id ) . '/' . $dir;
+
+	/**
+	 * Filter Custom upload subfolder
+	 *
+	 * @param string $sub_folder Upload subfolder.
+	 * @param int    $form_id Module ID.
+	 * @param string $dir Sub directory.
+	 */
+	$sub_folder = apply_filters( 'forminator_custom_upload_subfolder', $sub_folder, $form_id, $dir );
+
+	$upload_root = forminator_upload_root();
+
+	return wp_normalize_path( $upload_root . $sub_folder );
 }
 
 /**
@@ -2469,9 +2476,15 @@ function forminator_get_upload_path( $form_id, $dir = '' ) {
  * @return string
  */
 function forminator_get_upload_url( $form_id, $dir = '' ) {
-	$form_id = absint( $form_id );
+	$upload_path = forminator_get_upload_path( $form_id, $dir );
 
-	return forminator_upload_root_url() . $form_id . '_' . wp_hash( $form_id ) . '/' . $dir;
+	$upload_url = str_replace(
+		wp_normalize_path( untrailingslashit( ABSPATH ) ),
+		site_url(),
+		wp_normalize_path( $upload_path )
+	);
+
+	return $upload_url;
 }
 
 
@@ -2711,7 +2724,7 @@ function forminator_allowed_mime_types( $mimes = array(), $allow = true ) {
 		$mimes = get_allowed_mime_types();
 	}
 	if ( ! $allow ) {
-		$filters = array( 'htm|html', 'js', 'php', 'svg', 'swf', 'exe', 'html', 'htm' );
+		$filters = array( 'htm|html', 'js', 'jse', 'jar', 'php', 'php3', 'php4', 'php5', 'phtml', 'svg', 'swf', 'exe', 'html', 'htm', 'shtml', 'xhtml', 'xml', 'css', 'asp', 'aspx', 'jsp', 'sql', 'hta', 'dll', 'bat', 'com', 'sh', 'bash', 'py', 'pl' );
 		foreach ( $filters as $filter ) {
 			unset( $mimes[ $filter ] );
 		}

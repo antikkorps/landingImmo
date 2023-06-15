@@ -497,9 +497,23 @@
 			}
 
 			var $error_holder = $field_holder.find('.forminator-error-message');
+			var $error_id = $element.attr('id') + '-error';
+			var $element_aria_describedby = $element.attr('aria-describedby');
+
+			if ($element_aria_describedby) {
+				var ids = $element_aria_describedby.split(' ');
+				var errorIdExists = ids.includes($error_id);
+				if (!errorIdExists) {
+					ids.push($error_id);
+				}
+				var updatedAriaDescribedby = ids.join(' ');
+				$element.attr('aria-describedby', updatedAriaDescribedby);
+			} else {
+				$element.attr('aria-describedby', $error_id);
+			}
 
 			if ($error_holder.length === 0) {
-				$field_holder.append('<span class="forminator-error-message" aria-hidden="true"></span>');
+				$field_holder.append('<span class="forminator-error-message" id="' + $error_id + '"></span>');
 				$error_holder = $field_holder.find('.forminator-error-message');
 			}
 
@@ -516,6 +530,19 @@
 			}
 
 			var $error_holder = $field_holder.find('.forminator-error-message');
+			var $error_id = $element.attr('id') + '-error';
+			var $element_aria_describedby = $element.attr('aria-describedby');
+		  
+			if ($element_aria_describedby) {
+				var ids = $element_aria_describedby.split(' ');
+				ids = ids.filter(function (id) {
+					return id !== $error_id;
+				});
+				var updatedAriaDescribedby = ids.join(' ');
+			  	$element.attr('aria-describedby', updatedAriaDescribedby);
+			} else {
+			  	$element.removeAttr('aria-describedby');
+			}
 
 			$element.removeAttr('aria-invalid');
 			$error_holder.remove();

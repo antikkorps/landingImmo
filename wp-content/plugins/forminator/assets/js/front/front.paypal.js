@@ -149,7 +149,13 @@
 						$target_message.removeClass('forminator-accessible').addClass('forminator-error').html('').removeAttr( 'aria-hidden' );
 						$target_message.html('<label class="forminator-label--error"><span>' + generalMessage.form_has_error + '</span></label>');
 						self.focus_to_element($target_message);
-                    }
+                    } else{
+						$form.trigger( 'forminator:preSubmit:paypal', [ $target_message ] );
+						if ( $target_message.html() ) {
+							self.focus_to_element($target_message);
+							return false;
+						}
+					}
 
 					if ( paypalData.amount_type === 'variable' && paypalData.variable !== '' ) {
 						paypalData.amount = self.get_field_calculation( paypalData.variable );
@@ -206,7 +212,7 @@
 						self.focus_to_element($target_message);
 					}
 
-					$form.trigger('submit');
+					$form.trigger('submit.frontSubmit');
 				},
 
 				onCancel: function (data, actions) {

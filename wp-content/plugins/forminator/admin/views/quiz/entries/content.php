@@ -30,15 +30,15 @@ $submissions       = $this->get_total_entries();
 	</div>
 <?php endif; ?>
 
-<?php if ( $count > 0 ) : ?>
+<?php if ( $this->total_entries() > 0 ) : ?>
 
-	<form method="get" class="sui-box fui-box-entries forminator-entries-actions">
+	<form method="get" class="sui-box fui-listings-pagination fui-box-entries forminator-entries-actions">
 
-		<div class="fui-pagination-entries sui-pagination-wrap">
+		<div class="fui-pagination-mobile fui-pagination-entries sui-pagination-wrap">
 			<?php $this->paginate(); ?>
 		</div>
 
-		<div class="sui-box fui-box-entries">
+		<div class="fui-pagination-desktop sui-box fui-box-entries">
 
 			<fieldset class="forminator-entries-nonce">
 				<?php wp_nonce_field( 'forminatorQuizEntries', 'forminatorEntryNonce' ); ?>

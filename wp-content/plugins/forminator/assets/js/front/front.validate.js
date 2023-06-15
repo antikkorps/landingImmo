@@ -126,8 +126,10 @@
 					var getError    = false;
 					var getDesc     = false;
 
-					var errorMessage = this.errorMap[element.name];
-					var errorMarkup  = '<span class="forminator-error-message" aria-hidden="true"></span>';
+					var errorMessage    = this.errorMap[element.name];
+					var errorId         = holder.attr('id') + '-error';
+					var ariaDescribedby = holder.attr('aria-describedby');
+					var errorMarkup     = '<span class="forminator-error-message" id="'+ errorId +'"></span>';
 
 					if ( holderDate.length > 0 ) {
 
@@ -135,7 +137,7 @@
 						getError  = getColumn.find( '.forminator-error-message[data-error-field="' + holder.data( 'field' ) + '"]' );
 						getDesc   = getColumn.find( '.forminator-description' );
 
-						errorMarkup = '<span class="forminator-error-message" data-error-field="' + holder.data( 'field' ) + '" aria-hidden="true"></span>';
+						errorMarkup = '<span class="forminator-error-message" data-error-field="' + holder.data( 'field' ) + '" id="'+ errorId +'"></span>';
 
 						if ( 0 === getError.length ) {
 
@@ -157,7 +159,7 @@
 								if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 									holderField.append(
-										'<span class="forminator-error-message" aria-hidden="true"></span>'
+										'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 									);
 								}
 							}
@@ -182,7 +184,7 @@
 								if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 									holderField.append(
-										'<span class="forminator-error-message" aria-hidden="true"></span>'
+										'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 									);
 								}
 							}
@@ -198,7 +200,7 @@
 								if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 									holderField.append(
-										'<span class="forminator-error-message" aria-hidden="true"></span>'
+										'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 									);
 								}
 							}
@@ -216,7 +218,7 @@
 						getError  = getColumn.find( '.forminator-error-message[data-error-field="' + holder.data( 'field' ) + '"]' );
 						getDesc   = getColumn.find( '.forminator-description' );
 
-						errorMarkup = '<span class="forminator-error-message" data-error-field="' + holder.data( 'field' ) + '" aria-hidden="true"></span>';
+						errorMarkup = '<span class="forminator-error-message" data-error-field="' + holder.data( 'field' ) + '" id="'+ errorId +'"></span>';
 
 						if ( 0 === getError.length ) {
 
@@ -239,7 +241,7 @@
 								if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 									holderField.append(
-										'<span class="forminator-error-message" aria-hidden="true"></span>'
+										'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 									);
 								}
 							}
@@ -255,7 +257,7 @@
 								if ( 0 === holderField.find( '.forminator-error-message' ).length ) {
 
 									holderField.append(
-										'<span class="forminator-error-message" aria-hidden="true"></span>'
+										'<span class="forminator-error-message" id="'+ errorId +'"></span>'
 									);
 								}
 							}
@@ -288,6 +290,19 @@
 
 					}
 
+					// Field aria describedby for screen readers
+					if (ariaDescribedby) {
+						var ids = ariaDescribedby.split(' ');
+						var errorIdExists = ids.includes(errorId);
+						if (!errorIdExists) {
+						  ids.push(errorId);
+						}
+						var updatedAriaDescribedby = ids.join(' ');
+						holder.attr('aria-describedby', updatedAriaDescribedby);
+					} else {
+						holder.attr('aria-describedby', errorId);
+					}
+
 					// Field invalid status for screen readers
 					holder.attr( 'aria-invalid', 'true' );
 
@@ -305,6 +320,9 @@
 					var holderDate  = holder.closest( '.forminator-date-input' );
 					var holderError = '';
 
+					var errorId = holder.attr('id') + '-error';
+					var ariaDescribedby = holder.attr('aria-describedby');
+
 					if ( holderDate.length > 0 ) {
 						holderError = holderDate.parent().find( '.forminator-error-message[data-error-field="' + holder.data( 'field' ) + '"]' );
 					} else if ( holderTime.length > 0 ) {
@@ -313,7 +331,19 @@
 						holderError = holderField.find( '.forminator-error-message' );
 					}
 
-						// Remove invalid attribute for screen readers
+					// Remove or Update describedby attribute for screen readers
+					if (ariaDescribedby) {
+						var ids = ariaDescribedby.split(' ');
+						ids = ids.filter(function (id) {
+							return id !== errorId;
+						});
+						var updatedAriaDescribedby = ids.join(' ');
+						holder.attr('aria-describedby', updatedAriaDescribedby);
+					} else {
+						holder.removeAttr('aria-describedby');
+					}
+
+					// Remove invalid attribute for screen readers
 					holder.removeAttr( 'aria-invalid' );
 
 					// Remove error message
@@ -433,6 +463,16 @@
 	$.validator.addMethod("maxwords", function (value, element, param) {
 		return this.optional(element) || value.trim().split(/\s+/).length <= param;
 	});
+	// override core jquertvalidation maxlength. Ignore tags.
+	$.validator.methods.maxlength = function ( value, element, length ) {
+		value = value.replace( /<[^>]*>/g, '' );
+
+		if ( value.length > length ) {
+			return false;
+		}
+
+		return true;
+	};
 	$.validator.addMethod("trim", function( value, element, param ) {
 		return true === this.optional( element ) || 0 !== value.trim().length;
 	});

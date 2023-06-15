@@ -22,19 +22,27 @@
 
     <div class="sui-box-body">
         <p><?php echo esc_html( $description ); ?></p>
-	    <?php if ( isset( $has_payment ) && ! $has_payment ) { ?>
+	    <?php if ( ( isset( $has_payment ) && ! $has_payment )
+                   || ( isset( $has_live_payment ) && ! $has_live_payment ) ) { ?>
             <div class="sui-notice">
                 <div class="sui-notice-content">
                     <div class="sui-notice-message">
                         <i aria-hidden="true" class="sui-notice-icon sui-icon-info sui-md"></i>
-                        <p><?php esc_html_e( 'No payment field found. Add a PayPal or a Stripe field to your form to start collecting payments.', 'forminator' ); ?>
-                        </p>
+                        <?php if ( isset( $has_payment ) && ! $has_payment ) { ?>
+                            <p><?php esc_html_e( 'No payment field found. Add a PayPal or a Stripe field to your form to start collecting payments.', 'forminator' ); ?></p>
+                        <?php } else { ?>
+                            <p><?php printf( esc_html__( 'One or more of your payment fields are set to %1$sTest/Sandbox%2$s mode. Forminator reports only capture data from live payments. Please switch to live mode to view the payment data here', 'forminator' ),
+                                    '<strong>',
+                                    '</strong>'
+                                ); ?></p>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
 	    <?php } ?>
     </div>
-	<?php if ( ! isset( $has_payment ) || ( isset( $has_payment ) && $has_payment ) ) { ?>
+	<?php if ( ( ! isset( $has_payment ) && ! isset( $has_live_payment ) )
+               || ( isset( $has_live_payment ) && $has_live_payment ) ) { ?>
     <div class="sui-flushed">
         <table class="sui-table sui-table-flushed report-<?php echo esc_attr( $data_class ); ?>">
             <tbody>

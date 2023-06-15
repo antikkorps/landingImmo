@@ -23,8 +23,6 @@ class Forminator_CForm_Front_User_Registration extends Forminator_User {
 			add_action( 'forminator_cform_user_registered', array( $this, 'create_site' ), 10, 4 );
 		}
 		add_filter( 'forminator_custom_registration_form_errors', array( $this, 'submit_errors' ), 11, 3 );
-		// Change text of thankyou-message for other activation methods: 'email' && 'manual'.
-		add_filter( 'forminator_custom_form_thankyou_message', array( $this, 'change_thankyou_message' ), 11, 2 );
 		// Change value of a field that is not saved in DB.
 		add_filter( 'forminator_custom_form_after_render_value', array( $this, 'change_field_value' ), 11, 4 );
 	}
@@ -813,7 +811,7 @@ class Forminator_CForm_Front_User_Registration extends Forminator_User {
 				continue;
 			}
 			if ( strpos( $meta_value, '{' ) !== false ) {
-				$meta_value = forminator_replace_form_data( $meta_value, $custom_form, $entry );
+				$meta_value = forminator_replace_form_data( $meta_value, $custom_form, $entry, false, false, true );
 				$meta_value = forminator_replace_variables( $meta_value, $setting['form_id'] );
 			}
 
@@ -840,26 +838,6 @@ class Forminator_CForm_Front_User_Registration extends Forminator_User {
 		}
 
 		return $notifications;
-	}
-
-	/**
-	 * Change 'Thank you' message
-	 *
-	 * @param string                $message
-	 * @param Forminator_Form_Model $custom_form
-	 *
-	 * @return string
-	 */
-	public function change_thankyou_message( $message, $custom_form ) {
-		$settings = $custom_form->settings;
-		if ( ! empty( $settings['activation-method'] )
-			&& $this->check_activation_method( $settings['activation-method'] )
-			&& isset( $settings[ $settings['activation-method'] . '-thankyou-message' ] )
-		) {
-			$message = $settings[ $settings['activation-method'] . '-thankyou-message' ];
-		}
-
-		return $message;
 	}
 
 	/**

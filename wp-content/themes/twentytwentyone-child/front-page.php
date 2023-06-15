@@ -13,10 +13,10 @@ $description = get_the_archive_description();
         </div>
     </div>
     <!-- DIVIDER -->
-    <div class="divider"></div>
+    <div class="divider" id="nos_offres"></div>
 
     <!-- MAIN CARD -->
-    <div class="container_main_card d-flex" id="nos_offres">
+    <div class="container_main_card d-flex">
         <div class="row section_audio mx-5 my-5 justify-content-center">
 
             <div class="col-sm-12 col-md-auto col-lg-4">
@@ -85,11 +85,11 @@ $description = get_the_archive_description();
         </div>
 
         <!-- DIVIDER -->
-        <div class="divider"></div>
+        <div class="divider" id="avantages"></div>
 
         <!-- SECTION PICTO -->
 
-        <div class="titre_section d-flex justify-content-center my-5 text-white" id="avantages">
+        <div class="titre_section d-flex justify-content-center my-5 text-white">
             <h3>NOS AVANTAGES</h3>
         </div>
 
@@ -105,7 +105,7 @@ $description = get_the_archive_description();
                     </div>
                     <div class="col-sm-12 col-md-3 col-lg-3 my-3">
                         <div class="single-client text-center">
-                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/laptop-white.png';  ?> alt="illustration animation" style="width:35sudo%;">
+                            <img class="w-30" src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/05/laptop-white.png';  ?> alt="illustration animation" style="width:35%;">
                             <h6 class='mt-3'>100% e-learning</h6>
                         </div>
                         <!-- single -->
@@ -378,7 +378,7 @@ $description = get_the_archive_description();
 
         <!-- SECTION PICTO -->
 
-        <div class="titre_section d-flex justify-content-center mx-auto my-5">
+        <div class="title_section d-flex justify-content-center mx-auto my-5">
             <h3>QUELQUES CHIFFRES</h3>
         </div>
 

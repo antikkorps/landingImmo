@@ -543,6 +543,20 @@ class Forminator_Addon_Aweber_Wp_Api {
 		);
 		$args         = array_merge( $default_args, $args );
 
+		/**
+		 * Filter for Aweber integration for removing old tags during re-subscription.
+		 *
+		 * @param bool Dafault value.
+		 * @param string $account_id Account ID.
+		 * @param string $list_id List ID.
+		 * @param array  $args Arguments.
+		 */
+		$remove_old_tags = apply_filters( 'forminator_aweber_remove_old_tags', false, $account_id, $list_id, $args );
+
+		if ( ! $remove_old_tags ) {
+			unset( $args['tags']['remove'] );
+		}
+
 		if ( empty( $args['email'] ) ) {
 			throw new Forminator_Addon_Aweber_Wp_Api_Exception( __( 'Email is required on update AWeber subscriber.', 'forminator' ) );
 		}

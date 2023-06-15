@@ -115,6 +115,10 @@ a:active {
   height: auto;
 }
 
+.title_section h3 {
+  color: #084b84;
+}
+
 /* CONTACT FORM */
 #contact_container {
   width: 90%;

@@ -242,18 +242,22 @@ class Forminator_MultiValue extends Forminator_Field {
 
 			$selected = $selected ? 'checked="checked"' : '';
 
+			$label_id = $input_id . '-label';
+
 			$html .= sprintf(
-				'<label for="%s" class="%s" title="%s">',
+				'<label id="%s" for="%s" class="%s" title="%s">',
+				esc_attr( $label_id ),
 				esc_attr( $input_id ),
 				esc_attr( $class ),
 				esc_attr( $option['label'] )
 			);
 
 				$html .= sprintf(
-					'<input type="checkbox" name="%s" value="%s" id="%s" data-calculation="%s" %s %s aria-describedby="%s"/>',
+					'<input type="checkbox" name="%s" value="%s" id="%s" aria-labelledby="%s" data-calculation="%s" %s %s aria-describedby="%s"/>',
 					$name,
 					$value,
 					$input_id,
+					$label_id,
 					$calculation_value,
 					$selected,
 					$hidden_calc_behavior,

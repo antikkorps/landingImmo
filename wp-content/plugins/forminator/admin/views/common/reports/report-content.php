@@ -48,12 +48,13 @@ $report_data = Forminator_Admin_Report_Page::get_instance()->forminator_report_a
 				Forminator_Admin_Addons_page::get_instance()->render_template(
 					'admin/views/common/reports/single-report',
 					array(
-						'title'       => esc_html__( 'Payments', 'forminator' ),
-						'description' => esc_html__( 'Payments collected over the selected period.', 'forminator' ),
-						'icon'        => 'sui-icon forminator-icon-payment',
-						'data_class'  => 'payment',
-						'attrs'       => $report_data['payment'],
-						'has_payment' => Forminator_Admin_Report_Page::has_live_payments( $args['form_id'] ),
+						'title'            => esc_html__( 'Payments', 'forminator' ),
+						'description'      => esc_html__( 'Payments collected over the selected period.', 'forminator' ),
+						'icon'             => 'sui-icon forminator-icon-payment',
+						'data_class'       => 'payment',
+						'attrs'            => $report_data['payment'],
+						'has_payment'      => Forminator_Admin_Report_Page::has_payments( $args['form_id'] ),
+						'has_live_payment' => Forminator_Admin_Report_Page::has_live_payments( $args['form_id'] ),
 					)
 				);
 			}

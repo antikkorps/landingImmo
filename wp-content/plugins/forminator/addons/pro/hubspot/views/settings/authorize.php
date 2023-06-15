@@ -22,9 +22,9 @@ foreach ( $template_vars as $key => $val ) {
 
 	<p id="forminator-integration-popup__description" class="sui-description">
 		<?php if ( ! empty( $vars['token'] ) ) :
-			echo esc_html_e( 'You are already connected to the HubSpot. You can disconnect your HubSpot Integration (if you need to) using the button below.', 'forminator' );
+			esc_html_e( 'You are already connected to the HubSpot. You can disconnect your HubSpot Integration (if you need to) using the button below.', 'forminator' );
 		else :
-			echo esc_html_e( "Authenticate your HubSpot account using the button below. Note that you'll be taken to the HubSpot website to grant access to Forminator and then redirected back.", 'forminator' );
+			esc_html_e( "Authenticate your HubSpot account using the button below. Note that you'll be taken to the HubSpot website to grant access to Forminator and then redirected back.", 'forminator' );
 		endif; ?>
 	</p>
 

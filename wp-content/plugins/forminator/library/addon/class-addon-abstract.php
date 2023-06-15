@@ -12,6 +12,10 @@
  * @since 1.1
  */
 abstract class Forminator_Addon_Abstract implements Forminator_Addon_Interface {
+	/**
+	 * @var mixed
+	 */
+	public $multi_id;
 
 	/**
 	 * Slug will be used as identifier throughout forminator
@@ -42,7 +46,7 @@ abstract class Forminator_Addon_Abstract implements Forminator_Addon_Interface {
 	protected $_min_forminator_version;
 
 	/**
-	 * Full path the the Addon.
+	 * Full path the Addon.
 	 *
 	 * @since  1.1
 	 * @var string

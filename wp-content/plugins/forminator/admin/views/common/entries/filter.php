@@ -7,10 +7,11 @@
 $is_filter_enabled = $this->is_filter_box_enabled();
 $count             = $this->filtered_total_entries();
 $date_range        = '';
+$date_format       = 'Y-m-d';
 $date_created      = isset( $this->filters['date_created'] ) ? $this->filters['date_created'] : '';
 if ( is_array( $date_created ) && isset( $date_created[0] ) && isset( $date_created[1] ) ) {
-	$date_created[0] = date( 'm/d/Y', strtotime( $date_created[0] ) );
-	$date_created[1] = date( 'm/d/Y', strtotime( $date_created[1] ) );
+	$date_created[0] = date( $date_format, strtotime( $date_created[0] ) );
+	$date_created[1] = date( $date_format, strtotime( $date_created[1] ) );
 	$date_range      = implode( ' - ', $date_created );
 }
 $search_filter = isset( $this->filters['search'] ) ? $this->filters['search'] : '';

@@ -250,7 +250,7 @@ class Forminator_Phone extends Forminator_Field {
 
 		if ( ! empty( $description ) || ( 'character_limit' === $format_check && 0 < $limit ) ) {
 
-			$html .= '<span id="' . esc_attr( $id . '-description' ) . '" class="forminator-description">';
+			$html .= sprintf( '<span id="' . esc_attr( $id . '-description' ) . '" class="forminator-description" id="%s">', $id . '-description' );
 
 			if ( ! empty( $description ) ) {
 				$html .= wp_kses_data( $description );

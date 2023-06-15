@@ -1,5 +1,48 @@
 # Change Log
 
+## [1.12.6](https://github.com/wpmudev/forminator-ui/compare/v1.12.5...v1.12.6) (2023-05-17)
+
+#### 🐛 Bug Fix
+- `forms`
+  - fix(captcha): Invisible reCAPTCHA unwanted width. [#58](https://github.com/wpmudev/forminator-ui/pull/58) ([FOR-3519](https://incsub.atlassian.net/browse/FOR-3519)) ([@creador-dev](https://github.com/creador-dev))
+
+#### Committers: 1
+- Pawan Kumar ([@creador-dev](https://github.com/creador-dev))
+
+## [1.12.5](https://github.com/wpmudev/forminator-ui/compare/v1.12.4...v1.12.5) (2023-04-25)
+
+#### 🐛 Bug Fix
+- `forms`
+  - fix(multiselect): UI issue when submission limit reached. [#53](https://github.com/wpmudev/forminator-ui/pull/53) ([FOR-3096](https://incsub.atlassian.net/browse/FOR-3096)) ([@creador-dev](https://github.com/creador-dev))
+
+#### Committers: 2
+- Leighton Sapir ([@iamleigh](https://github.com/iamleigh))
+- Pawan Kumar ([@creador-dev](https://github.com/creador-dev))
+
+## [1.12.4](https://github.com/wpmudev/forminator-ui/compare/v1.12.3...v1.12.4) (2023-04-13)
+
+#### ✨ New Features
+- `polls`
+  - Add images alt text. [#55](https://github.com/wpmudev/forminator-ui/pull/55) ([FOR-1999](https://incsub.atlassian.net/browse/FOR-1999)) ([@creador-dev](https://github.com/creador-dev))
+
+#### 🚀 Improvement
+- `forms`
+  - reCAPTCHA is not responsive and breaks the design. [#49](https://github.com/wpmudev/forminator-ui/pull/49) ([FOR-2849](https://incsub.atlassian.net/browse/FOR-2849)) ([@creador-dev](https://github.com/creador-dev))
+
+#### Committers: 2
+- Leighton Sapir ([@iamleigh](https://github.com/iamleigh))
+- Pawan Kumar ([@creador-dev](https://github.com/creador-dev))
+
+## [1.12.3](https://github.com/wpmudev/forminator-ui/compare/v1.12.2...v1.12.3) (2023-02-03)
+
+#### 🐛 Bug Fix
+- `forms`
+  - fix(select2): Select voiceover not working in Safari. [#54](https://github.com/wpmudev/forminator-ui/pull/54) ([FOR-1704](https://incsub.atlassian.net/browse/FOR-1704)) ([@creador-dev](https://github.com/creador-dev))
+
+#### Committers: 2
+- Leighton Sapir ([@iamleigh](https://github.com/iamleigh))
+- Pawan Kumar ([@creador-dev](https://github.com/creador-dev))
+
 ## [1.12.2](https://github.com/wpmudev/forminator-ui/compare/v1.12.1...v1.12.2) (2023-01-26)
 
 #### 🐛 Bug Fix

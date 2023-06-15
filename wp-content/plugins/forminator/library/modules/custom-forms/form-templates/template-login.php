@@ -27,37 +27,12 @@ class Forminator_Template_Login extends Forminator_Template {
 	}
 
 	/**
-	 * Get url for lost password
-	 *
-	 * @since 1.12
-	 * @param string
-	 *
-	 * @return string
-	 */
-	private function get_lostpassword_url( $redirect ) {
-		global $wp_rewrite;
-
-		if ( is_null( $wp_rewrite ) ) {
-			$args                = array();
-			$args['redirect_to'] = urlencode( $redirect );
-
-			$lostpassword_url = add_query_arg( $args, network_site_url( 'wp-login.php?action=lostpassword', 'login' ) );
-		} else {
-			$lostpassword_url = wp_lostpassword_url( $redirect );
-		}
-
-		return $lostpassword_url;
-	}
-
-	/**
 	 * Template fields
 	 *
 	 * @since 1.0
 	 * @return array
 	 */
 	public function fields() {
-		$lostpassword_url = $this->get_lostpassword_url( get_permalink() );
-
 		return array(
 			array(
 				'wrapper_id' => 'wrapper-1511347711918-1669',
@@ -83,7 +58,7 @@ class Forminator_Template_Login extends Forminator_Template {
 						'required_message'             => __( 'Your password is required', 'forminator' ),
 						'field_label'                  => __( 'Password', 'forminator' ),
 						'placeholder'                  => __( 'Enter your password', 'forminator' ),
-						'description'                  => sprintf( __( '<a href="%s" title="Lost Password" target="_blank">Lost your password?</a>', 'forminator' ), esc_url( $lostpassword_url ) ),
+						'description'                  => sprintf( __( '<a href="%s" title="Lost Password" target="_blank">Lost your password?</a>', 'forminator' ), '{lostpassword_url}' ),
 						'confirm-password-label'       => __( 'Confirm Password', 'forminator' ),
 						'confirm-password-placeholder' => __( 'Confirm new password', 'forminator' ),
 					),
@@ -201,6 +176,8 @@ class Forminator_Template_Login extends Forminator_Template {
 			// Additional settings.
 			'hide-login-form'               => '1',
 			'hidden-login-form-message'     => '<p>' . __( 'You are already logged in.', 'forminator' ) . '</p>',
+			// Layout - Radio/Checkbox.
+			'field-image-size'              => 'custom',
 		);
 	}
 }

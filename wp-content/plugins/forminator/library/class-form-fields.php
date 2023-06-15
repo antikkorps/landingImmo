@@ -190,10 +190,8 @@ class Forminator_Fields {
 			return;
 		}
 
-		if ( ! file_exists( forminator_upload_root() . 'index.php' ) ) {
-			Forminator_Field::add_index_file( forminator_upload_root() );
-			Forminator_Field::add_htaccess_file();
-		}
+		Forminator_Field::check_upload_root_index_file();
+
 		if ( ! file_exists( forminator_upload_root() . 'css/index.php' ) ) {
 			Forminator_Field::add_index_file( forminator_upload_root() . 'css/index.php' );
 		}

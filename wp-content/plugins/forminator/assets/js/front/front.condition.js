@@ -1010,9 +1010,17 @@
 			self.clear_value(relation, e);
 
 			sub_relations.forEach(function (sub_relation) {
-				self.toggle_field(sub_relation, 'hide', "valid");
+				// Do opposite action because condition is definitely not met because dependent field is hidden.
+				let logic = self.get_field_logic(sub_relation),
+					action = 'hide' === logic.action ? 'show' : 'hide';
+				self.toggle_field(sub_relation, action, "valid");
+
 				if (self.has_relations(sub_relation)) {
-					sub_relations = self.hide_element(sub_relation, e);
+					if ( 'hide' === action ) {
+						self.hide_element(sub_relation, e);
+					} else {
+						self.show_element(sub_relation, e);
+					}
 				}
 			});
 		},

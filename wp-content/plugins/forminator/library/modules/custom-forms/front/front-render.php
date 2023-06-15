@@ -56,6 +56,13 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 	public $lead_model = null;
 
 	/**
+	 * Load wp_enqueue_editor or not
+	 *
+	 * @var bool
+	 */
+	public static $load_wp_enqueue_editor = false;
+
+	/**
 	 * Return class instance
 	 *
 	 * @since 1.0
@@ -63,6 +70,76 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 	 */
 	public static function get_instance() {
 		return new self();
+	}
+
+	/**
+	 * Whether font key should be applied to the current form or not.
+	 *
+	 * @param string $font_setting_key Font settings key.
+	 * @return bool
+	 */
+	private function has( $font_setting_key ) {
+		switch ( $font_setting_key ) {
+
+			case 'timeline':
+				return $this->has_field_type( 'page-break' ) && $this->has_pagination_header()
+					&& 'nav' === $this->get_pagination_type();
+
+			case 'progress':
+				return $this->has_field_type( 'page-break' ) && $this->has_pagination_header()
+					&& 'bar' === $this->get_pagination_type();
+
+			case 'title':
+			case 'subtitle':
+				return $this->has_field_type( 'section' );
+
+			case 'input-prefix':
+				return $this->has_field_type( 'calculation' );
+
+			case 'input-suffix':
+				return $this->has_field_type( 'calculation' ) || $this->has_field_type( 'currency' );
+
+			case 'radio':
+				return $this->has_field_type_with_setting_value( 'checkbox', 'value_type', 'checkbox' )
+					|| $this->has_field_type_with_setting_value( 'radio', 'value_type', 'radio' )
+					|| $this->has_field_type( 'gdprcheckbox' );
+
+			case 'select':
+			case 'dropdown':
+				return $this->has_field_type_with_setting_value( 'select', 'value_type', 'single' )
+					|| $this->has_field_type_with_setting_value( 'date', 'field_type', 'select' )
+					|| $this->has_field_type_with_setting_value( 'time', 'field_type', 'select' )
+					|| $this->has_field_type_with_setting_value( 'time', 'time_type', 'twelve' )
+					|| $this->has_field_type_with_setting_value( 'address', 'address_country', 'true' )
+					|| $this->has_field_type_with_setting_value( 'name', 'prefix', 'true' );
+
+			case 'calendar':
+				return $this->has_field_type_with_setting_value( 'date', 'field_type', 'picker' );
+
+			case 'multiselect':
+				return $this->has_field_type_with_setting_value( 'select', 'value_type', 'multiselect' );
+
+			case 'upload-single-button':
+			case 'upload-single-text':
+				return $this->has_field_type_with_setting_value( 'upload', 'file-type', 'single' )
+					|| $this->has_field_type_with_setting_value( 'postdata', 'post_image', 'false' );
+
+			case 'upload-multiple-panel':
+			case 'upload-multiple-file-name':
+			case 'upload-multiple-file-size':
+				return $this->has_field_type_with_setting_value( 'upload', 'file-type', 'multiple' );
+
+			case 'esign-placeholder':
+				return $this->has_field_type( 'signature' );
+
+			case 'repeater-button':
+				return $this->has_field_type( 'group' );
+
+			case 'pagination-buttons':
+				return $this->has_field_type( 'page-break' );
+		}
+
+		return true;
 	}
 
 	/**
@@ -175,9 +252,9 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 		}
 
 		if ( empty( $maybe_error ) ) {
-			$wrapper = '<div class="forminator-response-message forminator-error" aria-hidden="true"></div>';
+			$wrapper = '<div role="alert" aria-live="polite" class="forminator-response-message forminator-error" aria-hidden="true"></div>';
 		} else {
-			$wrapper = '<div class="forminator-response-message forminator-error" aria-hidden="false">' . esc_html( $maybe_error ) . '</div>';
+			$wrapper = '<div role="alert" aria-live="polite" class="forminator-response-message forminator-error" aria-hidden="false">' . esc_html( $maybe_error ) . '</div>';
 		}
 
 		return $wrapper;
@@ -226,7 +303,7 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 
 		$wrapper .= '<h1 id="' . esc_attr( $title_id ) . '"><a href="' . esc_url( $login_header_url ) . '" title="' . esc_attr( $login_header_title ) . '" style="background-image: url(' . esc_url( $custom_graphic ) . ');">' . esc_html__( 'Authenticate to login', 'forminator' ) . '</a></h1>';
 
-		$wrapper .= '<div role="alert" id="' . esc_attr( $notice_id ) . '" class="forminator-authentication-notice" data-error-message="' . esc_html__( 'The passcode was incorrect.', 'forminator' ) . '"></div>';
+		$wrapper .= '<div role="alert" aria-live="polite" id="' . esc_attr( $notice_id ) . '" class="forminator-authentication-notice" data-error-message="' . esc_html__( 'The passcode was incorrect.', 'forminator' ) . '"></div>';
 
 		foreach ( $providers as $slug => $provider ) {
 			$wrapper .= '<div class="forminator-authentication-box" id="forminator-2fa-' . esc_attr( $slug ) . '">';
@@ -349,6 +426,8 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 			$style_version = '4.0.3';
 
 			$script_src     = forminator_plugin_url() . 'assets/js/library/intlTelInput.min.js';
+			$script_src_cleave     = forminator_plugin_url() . 'assets/js/library/cleave.min.js';
+			$script_src_cleave_phone     = forminator_plugin_url() . 'assets/js/library/cleave-phone.i18n.js';
 			$script_version = FORMINATOR_VERSION;
 
 			if ( $is_ajax_load ) {
@@ -358,6 +437,16 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 					'src'  => add_query_arg( 'ver', $style_version, $script_src ),
 					'on'   => '$',
 					'load' => 'intlTelInput',
+				);
+				$this->scripts['forminator-cleave']    = array(
+					'src'  => add_query_arg( 'ver', $script_version, $script_src_cleave ),
+					'on'   => '$',
+					'load' => 'cleave',
+				);
+				$this->scripts['forminator-cleave-phone']    = array(
+					'src'  => add_query_arg( 'ver', $script_version, $script_src_cleave_phone ),
+					'on'   => '$',
+					'load' => 'cleave-phone',
 				);
 			}
 		}
@@ -433,7 +522,8 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 		wp_enqueue_style( 'buttons' );
 
 		if ( $this->has_postdata() || $this->has_editor() ) {
-			if ( $is_ajax_load && function_exists( 'wp_enqueue_editor' ) ) {
+			if ( ( $is_ajax_load || self::$load_wp_enqueue_editor )
+					&& function_exists( 'wp_enqueue_editor' ) ) {
 				wp_enqueue_editor();
 			}
 		}
@@ -848,6 +938,7 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 			}
 
 			foreach ( $wrapper['fields'] as $field ) {
+				$field['parent_group'] = ! empty( $wrapper['parent_group'] ) ? $wrapper['parent_group'] : '';
 
 				if ( $this->is_pagination( $field ) ) {
 					$has_pagination = true;
@@ -1004,8 +1095,8 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 			foreach ( $form_fields as $form_field ) {
 				if ( $this->is_pagination( $form_field ) ) {
 					$element                             = $form_field['element_id'];
-					$properties[ $element ]['prev-text'] = isset( $pagination_settings[ $element . '-previous' ] ) ? $pagination_settings[ $element . '-previous' ] : 'Previous';
-					$properties[ $element ]['next-text'] = isset( $pagination_settings[ $element . '-next' ] ) ? $pagination_settings[ $element . '-next' ] : 'Next';
+					$properties[ $element ]['prev-text'] = isset( $pagination_settings[ $element . '-previous' ] ) ? $pagination_settings[ $element . '-previous' ] : esc_html__( 'Previous', 'forminator' );
+					$properties[ $element ]['next-text'] = isset( $pagination_settings[ $element . '-next' ] ) ? $pagination_settings[ $element . '-next' ] : esc_html__( 'Next', 'forminator' );
 				}
 				if ( $this->is_paypal( $form_field ) ) {
 					$properties['paypal-id'] = $form_field['element_id'];
@@ -1293,8 +1384,12 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 		if ( ! isset( $field['element_id'] ) ) {
 			return '';
 		}
+		$id = $field['element_id'];
+		if ( ! empty( $field['group_suffix'] ) ) {
+			$id .= $field['group_suffix'];
+		}
 
-		return $field['element_id'];
+		return $id;
 	}
 
 	/**
@@ -2488,16 +2583,25 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 		// on clean design, disable google fonts.
 		if ( 'none' !== $this->get_form_design() && $font_settings_enabled ) {
 			$configs = array(
+				'response',
 				'label',
+				'description',
+				'validation',
 				'title',
 				'subtitle',
 				'input',
+				'input-prefix',
+				'input-suffix',
 				'radio',
 				'select',
 				'dropdown',
 				'calendar',
 				'multiselect',
+				'esign-placeholder',
+				'repeater-button',
+				'pagination-buttons',
 				'timeline',
+				'progress',
 				'button',
 				'upload-single-button',
 				'upload-single-text',
@@ -2524,6 +2628,10 @@ class Forminator_CForm_Front extends Forminator_Render_Form {
 				// check if font family selected.
 				if ( isset( $settings[ $font_family_settings_name ] ) && ! empty( $settings[ $font_family_settings_name ] ) ) {
 					$font_family_name = $settings[ $font_family_settings_name ];
+				}
+				// check if form has relevant fields.
+				if ( ! $this->has( $font_setting_key ) ) {
+					continue;
 				}
 
 				// skip not selected / `custom` is selected.

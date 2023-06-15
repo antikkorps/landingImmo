@@ -239,9 +239,9 @@ class Forminator_Name extends Forminator_Field {
 			$lname_ariareq = 'true';
 		}
 
-		// Columns in name field. 
+		// Columns in name field.
 		switch ($columns) {
-			case 1: 
+			case 1:
 				$cols = 12;
 				break;
 			case 3:
@@ -265,7 +265,7 @@ class Forminator_Name extends Forminator_Field {
 		if ( $prefix ) {
 
 			$prefix_data = array(
-				'name'       => $id . '-prefix',
+				'name'       => self::get_subfield_id( $id, '-prefix' ),
 				'id'         => 'forminator-form-' . $this->form_settings['form_id'] . '__field--' . $id . '_' . Forminator_CForm_Front::$uid,
 				'class'      => 'forminator-select2',
 				'data-multi' => true,
@@ -321,7 +321,7 @@ class Forminator_Name extends Forminator_Field {
 
 			$first_name = array(
 				'type'          => 'text',
-				'name'          => $id . '-first-name',
+				'name'          => self::get_subfield_id( $id, '-first-name' ),
 				'placeholder'   => $this->sanitize_value( self::get_property( 'fname_placeholder', $field ) ),
 				'id'            => 'forminator-field-first-' . $id . '_' . Forminator_CForm_Front::$uid,
 				'class'         => 'forminator-input',
@@ -329,7 +329,7 @@ class Forminator_Name extends Forminator_Field {
 				'data-multi'    => true,
 			);
 
-			$autofill_markup = $this->get_element_autofill_markup_attr( $id . '-first-name' );
+			$autofill_markup = $this->get_element_autofill_markup_attr( self::get_subfield_id( $id, '-first-name' ) );
 
 			$first_name = array_merge( $first_name, $autofill_markup );
 
@@ -365,7 +365,7 @@ class Forminator_Name extends Forminator_Field {
 
 			$middle_name = array(
 				'type'          => 'text',
-				'name'          => $id . '-middle-name',
+				'name'          => self::get_subfield_id( $id, '-middle-name' ),
 				'placeholder'   => $this->sanitize_value( self::get_property( 'mname_placeholder', $field ) ),
 				'id'            => 'forminator-field-middle-' . $id . '_' . Forminator_CForm_Front::$uid,
 				'class'         => 'forminator-input',
@@ -405,7 +405,7 @@ class Forminator_Name extends Forminator_Field {
 
 			$last_name = array(
 				'type'          => 'text',
-				'name'          => $id . '-last-name',
+				'name'          => self::get_subfield_id( $id, '-last-name' ),
 				'placeholder'   => $this->sanitize_value( self::get_property( 'lname_placeholder', $field ) ),
 				'id'            => 'forminator-field-last-' . $id . '_' . Forminator_CForm_Front::$uid,
 				'class'         => 'forminator-input',
@@ -413,7 +413,7 @@ class Forminator_Name extends Forminator_Field {
 				'data-multi'    => true,
 			);
 
-			$autofill_markup = $this->get_element_autofill_markup_attr( $id . '-last-name' );
+			$autofill_markup = $this->get_element_autofill_markup_attr( self::get_subfield_id( $id, '-last-name' ) );
 
 			$last_name = array_merge( $last_name, $autofill_markup );
 

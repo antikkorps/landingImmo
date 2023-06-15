@@ -673,6 +673,7 @@ abstract class Forminator_Admin_Module_Edit_Page extends Forminator_Admin_Page {
 
 				if ( is_object( $leads_model ) ) {
 					wp_delete_post( $leads_id );
+					self::delete_css( $leads_id );
 				}
 			}
 
@@ -685,6 +686,7 @@ abstract class Forminator_Admin_Module_Edit_Page extends Forminator_Admin_Page {
 				$function( $id, null, null );
 			}
 			wp_delete_post( $id );
+			self::delete_css( $id );
 
 			// Purge count forms cache.
 			$cache_prefix = 'forminator_' . $model::$module_slug . '_total_entries';
@@ -700,6 +702,42 @@ abstract class Forminator_Admin_Module_Edit_Page extends Forminator_Admin_Page {
 			 * @param int    $id - module id.
 			 */
 			do_action( 'forminator_' . $model::$module_slug . '_action_delete', $id );
+		}
+	}
+
+	/**
+	 * Delete module CSS file
+	 *
+	 * @param int $id Module ID.
+	 */
+	private static function delete_css( $id ) {
+		$css_file = Forminator_Assets_Enqueue::get_css_upload( $id, 'dir' );
+		if ( file_exists( $css_file ) ) {
+			// delete CSS file.
+			unlink( $css_file );
+		}
+		$css_dir    = dirname( $css_file );
+		$index_file = $css_dir . DIRECTORY_SEPARATOR . 'index.php';
+		if ( file_exists( $index_file ) ) {
+			// Delete index.php file inside `css` folder.
+			unlink( $index_file );
+		}
+
+		// remove `css` folder.
+		rmdir( $css_dir );
+
+		$module_dir = dirname( $css_dir );
+		$files      = array_diff( scandir( $module_dir ), array( '.', '..', 'index.php' ) );
+
+		// Completely remove module folder if there are no other files.
+		if ( ! $files ) {
+			$index_file = $module_dir . DIRECTORY_SEPARATOR . 'index.php';
+			if ( file_exists( $index_file ) ) {
+				// Delete index.php file inside module folder.
+				unlink( $index_file );
+			}
+			// remove module folder.
+			rmdir( $module_dir );
 		}
 	}
 
@@ -748,6 +786,7 @@ abstract class Forminator_Admin_Module_Edit_Page extends Forminator_Admin_Page {
 		header( 'Content-Length: ' . strlen( $encoded ) );
 
 		// make php send the generated csv lines to the browser.
+		ob_clean();
 		fpassthru( $fp );
 	}
 

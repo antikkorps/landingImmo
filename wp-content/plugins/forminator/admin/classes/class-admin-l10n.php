@@ -592,7 +592,7 @@ class Forminator_Admin_L10n {
 			esc_html__( 'Your site\'s current time is %1$s %2$s based on your %3$sWordPress Settings%4$s', 'forminator' ),
 			'<strong>' . esc_html( date_i18n( 'h:i a' ) ) . '</strong>',
 			'<strong>' . esc_html( $tzstring ) . '</strong>',
-			'<a href="' . esc_url( network_admin_url( 'options-general.php' ) ) . '" target="_blank">',
+			'<a href="' . esc_url( admin_url( 'options-general.php' ) ) . '" target="_blank">',
 			'</a>'
 		);
 

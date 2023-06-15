@@ -120,7 +120,6 @@ class Forminator_Date extends Forminator_Field {
 		$html            = '';
 		$design          = $this->get_form_style( $settings );
 		$id              = self::get_property( 'element_id', $field );
-		$name            = $id;
 		$required        = self::get_property( 'required', $field, false );
 		$placeholder     = $this->sanitize_value( self::get_property( 'placeholder', $field ) );
 		$label           = $this->sanitize_value( self::get_property( 'field_label', $field ) );
@@ -282,7 +281,7 @@ class Forminator_Date extends Forminator_Field {
 					'autocomplete'       => 'off',
 					'type'               => 'text',
 					'size'               => 1,
-					'name'               => $name,
+					'name'               => $id,
 					'value'              => $default_value,
 					'placeholder'        => $placeholder,
 					'id'                 => 'forminator-field-' . $id . '-picker' . $uniq_id,
@@ -389,14 +388,14 @@ class Forminator_Date extends Forminator_Field {
 				switch ( $format ) {
 
 					case 'dd':
-						$day_id = $id . '-day';
+						$day_id = self::get_subfield_id( $id, '-day' );
 						$html  .= '<div id="' . $day_id . '" class="forminator-col">';
 
 						$html .= '<div class="forminator-field">';
 
 						$day_data = array(
-							'name'             => $id . '-day',
-							'id'               => 'forminator-form-' . $settings['form_id'] . '__field--' . $id . '-day' . $uniq_id,
+							'name'             => $day_id,
+							'id'               => 'forminator-form-' . $settings['form_id'] . '__field--' . $day_id . $uniq_id,
 							'class'            => 'forminator-select2',
 							'data-format'      => $date_format,
 							'data-parent'      => $id,
@@ -440,14 +439,14 @@ class Forminator_Date extends Forminator_Field {
 						break;
 
 					case 'mm':
-						$month_id = $id . '-month';
+						$month_id = self::get_subfield_id( $id, '-month' );
 						$html    .= '<div id="' . $month_id . '" class="forminator-col">';
 
 						$html .= '<div class="forminator-field">';
 
 						$month_data = array(
-							'name'             => $id . '-month',
-							'id'               => 'forminator-form-' . $settings['form_id'] . '__field--' . $id . '-month' . $uniq_id,
+							'name'             => $month_id,
+							'id'               => 'forminator-form-' . $settings['form_id'] . '__field--' . $month_id . $uniq_id,
 							'class'            => 'forminator-select2',
 							'data-format'      => $date_format,
 							'data-parent'      => $id,
@@ -491,14 +490,14 @@ class Forminator_Date extends Forminator_Field {
 						break;
 
 					case 'yy':
-						$year_id = $id . '-year';
+						$year_id = self::get_subfield_id( $id, '-year' );
 						$html   .= '<div id="' . $year_id . '" class="forminator-col">';
 
 						$html .= '<div class="forminator-field">';
 
 						$year_data = array(
-							'name'             => $id . '-year',
-							'id'               => 'forminator-form-' . $settings['form_id'] . '__field--' . $id . '-year' . $uniq_id,
+							'name'             => $year_id,
+							'id'               => 'forminator-form-' . $settings['form_id'] . '__field--' . $year_id . $uniq_id,
 							'class'            => 'forminator-select2',
 							'data-format'      => $date_format,
 							'data-parent'      => $id,
@@ -598,7 +597,7 @@ class Forminator_Date extends Forminator_Field {
 				switch ( $format ) {
 
 					case 'dd':
-						$day   = $id . '-day';
+						$day   = self::get_subfield_id( $id, '-day' );
 						$html .= '<div id="' . $day . '" class="forminator-col">';
 
 						$html .= '<div class="forminator-field">';
@@ -607,10 +606,10 @@ class Forminator_Date extends Forminator_Field {
 							'type'        => 'number',
 							'min'         => 1,
 							'max'         => 31,
-							'name'        => $id . '-day',
+							'name'        => $day,
 							'value'       => esc_attr( $day_value ),
 							'placeholder' => $this->sanitize_value( self::get_property( 'day_placeholder', $field ) ),
-							'id'          => 'forminator-field-' . $id . '-day' . $uniq_id,
+							'id'          => 'forminator-field-' . $day . $uniq_id,
 							'class'       => 'forminator-input',
 							'data-field'  => 'day',
 							'data-format' => $date_format,
@@ -658,7 +657,7 @@ class Forminator_Date extends Forminator_Field {
 						break;
 
 					case 'mm':
-						$month = $id . '-month';
+						$month = self::get_subfield_id( $id, '-month' );
 						$html .= '<div id="' . $month . '" class="forminator-col">';
 
 						$html .= '<div class="forminator-field">';
@@ -667,10 +666,10 @@ class Forminator_Date extends Forminator_Field {
 							'type'        => 'number',
 							'min'         => 1,
 							'max'         => 12,
-							'name'        => $id . '-month',
+							'name'        => $month,
 							'value'       => esc_attr( $month_value ),
 							'placeholder' => $this->sanitize_value( self::get_property( 'month_placeholder', $field ) ),
-							'id'          => 'forminator-field-' . $id . '-month' . $uniq_id,
+							'id'          => 'forminator-field-' . $month . $uniq_id,
 							'class'       => 'forminator-input',
 							'data-field'  => 'month',
 							'data-format' => $date_format,
@@ -716,7 +715,7 @@ class Forminator_Date extends Forminator_Field {
 						break;
 
 					case 'yy':
-						$year  = $id . '-year';
+						$year  = self::get_subfield_id( $id, '-year' );
 						$html .= '<div id="' . $year . '" class="forminator-col">';
 
 						$html .= '<div class="forminator-field">';
@@ -724,9 +723,9 @@ class Forminator_Date extends Forminator_Field {
 						$year_data = array(
 							'type'        => 'number',
 							'min'         => 1,
-							'name'        => $id . '-year',
+							'name'        => $year,
 							'placeholder' => $this->sanitize_value( self::get_property( 'year_placeholder', $field ) ),
-							'id'          => 'forminator-field-' . $id . '-year' . $uniq_id,
+							'id'          => 'forminator-field-' . $year . $uniq_id,
 							'class'       => 'forminator-input',
 							'data-field'  => 'year',
 							'value'       => esc_attr( $year_value ),

@@ -81,7 +81,7 @@ foreach ( $template_vars as $key => $val ) {
 			<?php
 			/* translators: ... */
 			printf(
-				esc_html_e( 'You can format your message using Slack Flavored Markdown, find more information %shere%s.', 'forminator' ),
+				esc_html__( 'You can format your message using Slack Flavored Markdown, find more information %shere%s.', 'forminator' ),
 				'<a href="https://get.slack.help/hc/en-us/articles/202288908-how-can-i-add-formatting-to-my-messages" target="_blank">',
 				'</a>'
 			);
@@ -92,7 +92,7 @@ foreach ( $template_vars as $key => $val ) {
 			<?php
 			/* translators: ... */
 			printf(
-				esc_html_e( 'By default sent message will include Quiz Answer and Quiz Result as attachment using Forminator Format to ease you up, more information about attachment can be found %shere%s.',
+				esc_html__( 'By default sent message will include Quiz Answer and Quiz Result as attachment using Forminator Format to ease you up, more information about attachment can be found %shere%s.',
 				'forminator' ),
 				'<a href="https://api.slack.com/docs/message-attachments" target="_blank">',
 				'</a>'

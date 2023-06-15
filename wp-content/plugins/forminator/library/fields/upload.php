@@ -793,6 +793,10 @@ class Forminator_Upload extends Forminator_Field {
 		$exploded_name    = explode( '/', $unique_file_name );
 		$filename         = end( $exploded_name );
 
+		if ( ! is_dir( $upload_path ) ) {
+			wp_mkdir_p( $upload_path );
+		}
+
 		if ( wp_is_writable( $upload_path ) ) {
 			$file_path = wp_normalize_path( $upload_path . '/' . trim( sanitize_file_name( $filename ) ) );
 			$file_url  = $upload_url . '/' . trim( sanitize_file_name( $filename ) );

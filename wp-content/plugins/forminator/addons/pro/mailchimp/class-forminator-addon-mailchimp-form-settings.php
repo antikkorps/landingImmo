@@ -675,7 +675,7 @@ class Forminator_Addon_Mailchimp_Form_Settings extends Forminator_Addon_Form_Set
 	 *
 	 * @since 1.15.3
 	 *
-	 * @param string $selected_ids Selected Tag ID.
+	 * @param array $selected_ids Selected Tag ID.
 	 * @return array
 	 */
 	private function get_second_step_options_tags( $selected_ids ) {

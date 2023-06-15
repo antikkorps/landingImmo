@@ -45,7 +45,6 @@ if ( ! FORMINATOR_PRO ) {
 									data-prop="<?php echo 100 > $submission ? 'forminator_submission_rating_later' : 'forminator_submission_rating_later_dismiss'; ?>"><?php esc_html_e( 'Maybe later', 'forminator' ); ?></button>
 
 							<a href="#" style="color: #888;"
-							data-prop="forminator_rating_dismissed"
 							data-prop="forminator_rating_dismissed"><?php esc_html_e( 'No Thanks', 'forminator' ); ?></a>
 						</p>
 

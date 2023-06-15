@@ -994,7 +994,7 @@ class Forminator_Admin_AJAX {
 
 		// Submissions Retention.
 		$cform_retain_forever = filter_var( $post_data['form_retain_submission_forever'], FILTER_VALIDATE_BOOLEAN );
-		update_option( 'retain_submission_forever', $cform_retain_forever );
+		update_option( 'retain_submission_forever', (string) $cform_retain_forever );
 		if ( $cform_retain_forever ) {
 			$post_data['form_retain_submission_number'] = 0;
 		}
@@ -1010,7 +1010,7 @@ class Forminator_Admin_AJAX {
 
 		// IP Retention
 		$cform_retain_ip_forever = filter_var( $post_data['form_retain_ip_forever'], FILTER_VALIDATE_BOOLEAN );
-		update_option( 'retain_ip_forever', $cform_retain_ip_forever );
+		update_option( 'retain_ip_forever', (string) $cform_retain_ip_forever );
 		if ( $cform_retain_ip_forever ) {
 			$post_data['form_retain_ip_number'] = 0;
 		}
@@ -1029,7 +1029,7 @@ class Forminator_Admin_AJAX {
 		 */
 		// Submissions Retention
 		$poll_retain_submissions_forever = filter_var( $post_data['poll_retain_submission_forever'], FILTER_VALIDATE_BOOLEAN );
-		update_option( 'poll_retain_submission_forever', $poll_retain_submissions_forever );
+		update_option( 'poll_retain_submission_forever', (string) $poll_retain_submissions_forever );
 		if ( $poll_retain_submissions_forever ) {
 			$post_data['poll_retain_submission_number'] = 0;
 		}
@@ -1046,7 +1046,7 @@ class Forminator_Admin_AJAX {
 
 		// IP Retention
 		$poll_retain_ip_forever = filter_var( $post_data['poll_retain_ip_forever'], FILTER_VALIDATE_BOOLEAN );
-		update_option( 'retain_poll_forever', $poll_retain_ip_forever );
+		update_option( 'retain_poll_forever', (string) $poll_retain_ip_forever );
 		if ( $poll_retain_ip_forever ) {
 			$post_data['poll_retain_ip_number'] = 0;
 		}
@@ -1065,7 +1065,7 @@ class Forminator_Admin_AJAX {
 		 */
 		// Submissions Retention
 		$quiz_retain_submissions_forever = filter_var( $post_data['quiz_retain_submission_forever'], FILTER_VALIDATE_BOOLEAN );
-		update_option( 'quiz_retain_submission_forever', $quiz_retain_submissions_forever );
+		update_option( 'quiz_retain_submission_forever', (string) $quiz_retain_submissions_forever );
 		if ( $quiz_retain_submissions_forever ) {
 			$post_data['quiz_retain_submission_number'] = 0;
 		}
@@ -1981,6 +1981,28 @@ class Forminator_Admin_AJAX {
 		$notification_name = Forminator_Core::sanitize_text_field( 'prop' );
 		$input_value       = Forminator_Core::sanitize_text_field( 'value' );
 
+		$allowed_options = array(
+			'forminator_skip_pro_notice',
+			'forminator_cf7_notice_dismissed',
+			'forminator_stripe_notice_dismissed',
+			'forminator_rating_success',
+			'forminator_rating_dismissed',
+			'forminator_publish_rating_later',
+			'forminator_publish_rating_later_dismiss',
+			'forminator_days_rating_later_dismiss',
+			'forminator_submission_rating_later',
+			'forminator_submission_rating_later_dismiss',
+			'forminator_hosting_banner_dismiss',
+			'forminator_hosting_banner_later',
+		);
+
+		if ( ! in_array( $notification_name, $allowed_options, true )
+				&& 0 !== strpos( $notification_name, 'forminator_addons_update_' )
+				&& 0 !== strpos( $notification_name, 'forminator_dismiss_feature_' )
+				) {
+			wp_send_json_error( esc_html__( 'Invalid option name', 'forminator' ) );
+		}
+
 		if ( ! empty( $input_value ) ) {
 			update_option( $notification_name, $input_value );
 		} else {
@@ -2024,6 +2046,18 @@ class Forminator_Admin_AJAX {
 
 		$notification_name = Forminator_Core::sanitize_text_field( 'prop' );
 		$form_id           = filter_input( INPUT_POST, 'form_id', FILTER_VALIDATE_INT );
+
+		$allowed_keys = array(
+			'forminator_publish_rating_later',
+			'forminator_publish_rating_later_dismiss',
+			'forminator_days_rating_later_dismiss',
+			'forminator_submission_rating_later',
+			'forminator_submission_rating_later_dismiss',
+		);
+
+		if ( ! in_array( $notification_name, $allowed_keys, true ) ) {
+			wp_send_json_error( esc_html__( 'Invalid notification name', 'forminator' ) );
+		}
 
 		update_post_meta( $form_id, $notification_name, true );
 

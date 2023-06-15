@@ -226,6 +226,8 @@ class Forminator_Template_Quote extends Forminator_Template {
 			'cform-pagination-font-weight'  => 'normal',
 			'payment_require_ssl'           => false,
 			'submission-file'               => 'delete',
+			// Layout - Radio/Checkbox.
+			'field-image-size'              => 'custom',
 		);
 	}
 }

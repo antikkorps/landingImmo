@@ -30,8 +30,8 @@
 	$notice_dismissed = get_option( 'forminator_dismiss_feature_1231', false );
 	$version_upgraded = get_option( 'forminator_version_upgraded', false );
 
-	if ( ! $notice_dismissed && $version_upgraded && forminator_is_show_documentation_link() && ! isset( $_GET['createnew'] ) ) {
-		$this->template( 'dashboard/new-feature-notice' );
-	} ?>
+//	if ( ! $notice_dismissed && $version_upgraded && forminator_is_show_documentation_link() && ! isset( $_GET['createnew'] ) ) {
+//		$this->template( 'dashboard/new-feature-notice' );
+//	} ?>
 
 </section>

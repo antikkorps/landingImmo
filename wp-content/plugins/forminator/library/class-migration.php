@@ -77,7 +77,14 @@ class Forminator_Migration {
 		 *
 		 * @since 1.15.12
 		 */
-		$settings = self::migrate_data_storage_settings( $settings, $fields );
+		$settings = self::migrate_data_storage_settings( $settings );
+
+		/**
+		 * Migrate behaviour settings
+		 *
+		 * @since 1.15.12
+		 */
+		$settings = self::migrate_data_behaviour_settings( $settings, $fields );
 
 		return $settings;
 	}
@@ -1085,6 +1092,28 @@ class Forminator_Migration {
 		}
 
 		unset( $settings['store'] );
+
+		return $settings;
+	}
+
+	/**
+	 *  Migrate Behaviour data
+	 *
+	 * @param $settings
+	 * @param $field
+	 *
+	 * @return mixed
+	 */
+	public static function migrate_data_behaviour_settings( $settings, $fields ) {
+		if ( empty( $fields ) ) {
+			return $settings;
+		}
+
+		foreach ( $fields as $field ) {
+			if ( isset( $field['type'] ) && 'stripe' === $field['type'] ) {
+				$settings['enable-ajax'] = 'true';
+			}
+		}
 
 		return $settings;
 	}

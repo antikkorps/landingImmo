@@ -418,6 +418,8 @@ class Forminator_Quiz_Admin extends Forminator_Admin_Module {
 				'knowledge-social-google'                  => '#DB4437',
 				'forminator-knowledge-social-linkedin'     => '#0084BF',
 				'knowledge-social-size'                    => '36',
+				// KNOWLEDGE Radio and Checkbox Image Size.
+				'field-image-size'                         => 'custom',
 			)
 		);
 	}

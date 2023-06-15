@@ -172,6 +172,9 @@ class Forminator_Poll_Admin extends Forminator_Admin_Module {
 			'poll_button'                    => __( 'Poll button', 'forminator' ),
 			'poll_link'                      => __( 'Poll link', 'forminator' ),
 
+			// Appearance » Customize Radio and Checkbox Image Size.
+			'field-image-size'               => 'custom',
+
 			// CLEAN-UP (OLD).
 			'add_answer'                     => __( 'Add Answer', 'forminator' ),
 			'answer_placeholder'             => __( 'Enter poll answer', 'forminator' ),

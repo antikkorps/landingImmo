@@ -167,6 +167,10 @@ class Forminator_Settings_Page extends Forminator_Admin_Page {
 
 			'fields-style',
 
+			'field-image-size',
+			'field-image-width',
+			'field-image-height',
+
 			'use-custom-css',
 			'custom_css',
 		);

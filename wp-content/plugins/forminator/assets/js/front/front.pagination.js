@@ -458,7 +458,7 @@
 			if (this.step === this.totalSteps && ! this.finished ) {
 				//keep pagination content on last step before submit
 				this.step--;
-				this.$el.submit();
+				this.$el.trigger( 'submit' );
 			}
 
 			var submitButtonClass = this.settings.submitButtonClass;
@@ -468,30 +468,48 @@
 					loadingText = this.$el.find('.forminator-pagination-submit').data('loading'),
 					last_button_txt = ( this.custom_label[ 'pagination-labels' ] === 'custom'
 						&& this.custom_label['last-previous'] !== '' ) ? this.custom_label['last-previous'] : this.prev_button,
-					forminatorPayment = self.$el.find('.forminator-payment');
+					forminatorPayment = self.$el.find('.forminator-payment'),
+					nextBtn = this.$el.find('.forminator-button-next'),
+					submitButton = this.$el.find( '.forminator-button-submit' );
 
 				if ( this.$el.hasClass('forminator-design--material') ) {
 
 					this.$el.find('.forminator-button-back .forminator-button--text').html( last_button_txt );
-					this.$el.find('.forminator-button-next')
-						.removeClass('forminator-button-next')
-						.attr('id', 'forminator-submit')
-						.addClass('forminator-button-submit ' + submitButtonClass )
-						.find('.forminator-button--text')
-						.html('')
-						.html(submit_button_text).data('loading', loadingText);
+					nextBtn.removeClass('forminator-button-next').attr('id', 'forminator-submit');
+
+					setTimeout(
+						function() {
+							nextBtn
+							.addClass('forminator-button-submit ' + submitButtonClass )
+							.find('.forminator-button--text')
+							.html('')
+							.html(submit_button_text).data('loading', loadingText);
+						},
+						20
+					);
 				} else {
 					this.$el.find('.forminator-button-back').html( last_button_txt );
-					this.$el.find( '.forminator-button-next' )
-						.removeClass( 'forminator-button-next' )
-						.attr( 'id', 'forminator-submit' )
-						.addClass( 'forminator-button-submit ' + submitButtonClass )
-						.html( submit_button_text ).data('loading', loadingText);
+					nextBtn.removeClass( 'forminator-button-next' ).attr( 'id', 'forminator-submit' );
+
+					setTimeout(
+						function() {
+							nextBtn
+							.addClass( 'forminator-button-submit ' + submitButtonClass )
+							.html( submit_button_text ).data('loading', loadingText);
+						},
+						20
+					);
 				}
 
-				var submitButton = this.$el.find( '.forminator-button-submit' );
+				// Redeclare submit button.
+				setTimeout(
+					function() {
+						submitButton = self.$el.find( '.forminator-button-submit' );
+					},
+					30
+				);
 
-				if ( ! submit_button_text ) {
+				if ( this.$el.hasClass('forminator-quiz') && ! submit_button_text ) {
 					submitButton.addClass('forminator-hidden');
 					if ( this.$el.find( '.forminator-submit-rightaway').length ) {
 						submitButton.html( window.ForminatorFront.quiz.view_results );
@@ -508,7 +526,7 @@
 								forminatorPayment.removeClass( 'forminator-hidden' );
 							}
 						},
-						50
+						40
 					);
 				}
 

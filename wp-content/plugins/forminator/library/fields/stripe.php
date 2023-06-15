@@ -1046,6 +1046,8 @@ class Forminator_Stripe extends Forminator_Field {
 
 		if ( ! empty( $payments ) ) {
 			foreach ( $payments as $payment_settings ) {
+				$payment_settings['condition_rule']   = ! empty( $payment_settings['condition_rule'] ) ? $payment_settings['condition_rule'] : 'all';
+				$payment_settings['condition_action'] = 'show';
 				if ( ! Forminator_Field::is_hidden( $field, $payment_settings ) ) {
 					return $payment_settings;
 				}

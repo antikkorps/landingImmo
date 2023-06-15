@@ -61,13 +61,13 @@ class Forminator_Custom_Form_Admin extends Forminator_Admin_Module {
 			if ( $id ) {
 				$data['formNonce'] = wp_create_nonce( 'forminator_save_builder_fields' );
 				$model             = Forminator_Base_Form_Model::get_model( $id );
-				$settings          = $model->get_form_settings();
-				$behavior          = $model->get_behavior_array();
 			}
 
 			$wrappers = array();
 			if ( is_object( $model ) ) {
 				$wrappers = $model->get_fields_grouped();
+				$settings = $model->get_form_settings();
+				$behavior = $model->get_behavior_array();
 			}
 
 			if ( isset( $model->settings['form-type'] ) && 'registration' === $model->settings['form-type'] ) {
@@ -353,6 +353,7 @@ class Forminator_Custom_Form_Admin extends Forminator_Admin_Module {
 				'form-padding'         => '',
 				'form-border'          => '',
 				'fields-style'         => 'open',
+				'field-image-size'     => 'custom',
 				'validation'           => 'on_submit',
 				'akismet-protection'   => true,
 				'form-style'           => 'default',
@@ -542,18 +543,22 @@ class Forminator_Custom_Form_Admin extends Forminator_Admin_Module {
 		// Save data
 		$id = $form_model->save();
 
-		/**
-		 * Action called after form saved to database
-		 *
-		 * @since 1.11
-		 *
-		 * @param int    $id - form id.
-		 * @param string $title - form title.
-		 * @param string $status - form status.
-		 * @param array  $fields - form fields.
-		 * @param array  $settings - form settings.
-		 */
-		do_action( 'forminator_custom_form_action_' . $action, $id, $title, $status, $fields, $settings );
+		try {
+			/**
+			 * Action called after form saved to database
+			 *
+			 * @since 1.11
+			 *
+			 * @param int    $id - form id.
+			 * @param string $title - form title.
+			 * @param string $status - form status.
+			 * @param array  $fields - form fields.
+			 * @param array  $settings - form settings.
+			 */
+			do_action( 'forminator_custom_form_action_' . $action, $id, $title, $status, $fields, $settings );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'forminator_stripe_error', $e->getMessage() );
+		}
 
 		// add privacy settings to global option.
 		$override_privacy = false;

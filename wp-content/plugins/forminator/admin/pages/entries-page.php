@@ -223,7 +223,6 @@ class Forminator_Entries_Page extends Forminator_Admin_Page {
 			false
 		); // inputmask binding.
 
-		// TODO - Deprecation warning fix: Need to add value to moment() in ISO or RFC format.
 		// use inline script to allow hooking into this.
 		$daterangepicker_ranges
 			= sprintf(
