@@ -119,6 +119,13 @@ a:active {
   color: #084b84;
 }
 
+audio {
+  width: 15rem;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}
+
 /* CONTACT FORM */
 #contact_container {
   width: 90%;
@@ -223,6 +230,14 @@ a:active {
     width: 50%;
     height: auto;
   }
+
+  audio {
+    width: 95%;
+    display: flex;
+    justify-content: center;
+    margin: auto;
+  }
+
   /* CONTACT FORM */
   .illustration_contact {
     display: flex;

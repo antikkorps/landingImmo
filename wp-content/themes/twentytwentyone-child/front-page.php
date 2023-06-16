@@ -272,7 +272,7 @@ $description = get_the_archive_description();
                 <iframe src="https://www.youtube.com/embed/K4A-ll-D8SQ?rel=0&amp;autoplay=1&mute=1" title="Découvrez Nouvelles Donnes avec Aurélie, Directrice" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
             <div class="video_description col-sm-12">
-                <p class='mx-5 my-5 py-5'>Centre d’entrainement à distance spécialisé dans les pratiques commerciales et managériales dans le secteur de l’immobilier</p>
+                <p class='mx-5 my-5 py-5'>Le Training Center est une centre d'entrainement à distance pour accompagner les entreprises et leurs collaborateurs avec des séances d'appropriation opérationnelle, par téléphone ou visio conférence. Que vous recherchiez à développer l'efficacité de vos collaborateurs sur l'excellence relationnelle, la performance commerciale ou bien le coaching managériale, nous réalisons des mises en situations réalistes et adaptées à votre entreprise. Nos experts de la relation client sont de véritables acteurs lors des séances et maîtrisent à la perfection les mises en situation avec une capacité d'observation et d'analyse extrêmement juste et précise. Dès la première séance, les freins personnels sont levés et nous travaillons sur l'appropriation puis l'ancrage d'une méthode ou posture. Selon vos objectifs et vos besoins, nous vous proposons des parcours qui combinent formation et entrainement.</p>
 
             </div>
             <div class="btn_container d-flex mt-3 justify-content-center">
@@ -343,9 +343,14 @@ $description = get_the_archive_description();
                             <h5 class="card-title">Quelques exemples en audio</h5>
 
                             <ul class="list-group my-3">
-                                <li class="list-group-item"><a href="">lien 1</a></li>
-                                <li class="list-group-item"><a href="">lien 2</a></li>
-                                <li class="list-group-item"><a href="">lien 3</a></li>
+                                <li class="list-group-item"><audio controls autoplay>
+                                        <source src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/06/2023-06-14-Capsule-Audio-Immo-Accorche-et-approche-V3.mp3';  ?> type="audio/mpeg">
+                                        Your browser does not support the audio element.
+                                    </audio></li>
+                                <li class="list-group-item"><audio controls autoplay>
+                                        <source src=<?php echo wp_get_upload_dir()['baseurl'] . '/2023/06/2023-06-14-Capsule-Audio-Immo-Objection-V2.mp3';  ?> type="audio/mpeg">
+                                        Your browser does not support the audio element.
+                                    </audio></li>
                             </ul>
                             <div class="fw-bold">
                                 <p>mais le mieux reste encore de nous contacter et de tester en conditions réelles</p>
